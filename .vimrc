@@ -21,12 +21,14 @@ let mapleader = ","
 nnoremap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <leader>gd :YcmCompleter GoToDefinition<CR>
 
-let g:ctrlp_max_files=0
+let g:ctrlp_max_files=10000
 let g:ctrlp_max_depth=40
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*pyc,*/tsenv/*,*/venv/*,*/vendor/*,*/node_modules/*
 
 let g:ale_linters = {
 \   'python': ['flake8'],
 \   'markdown': ['markdownlint'],
+\   'javascript': ['eslint'],
 \}
 
 let g:ycm_autoclose_preview_window_after_completion=1
