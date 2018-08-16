@@ -31,6 +31,13 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \}
 
+let g:ale_fixers = {
+\   'python': ['autopep8'],
+\   'javascript': ['eslint']
+\}
+
+let g:ale_fix_on_save = 1
+
 let g:ycm_autoclose_preview_window_after_completion=1
 
 noremap <C-h> <C-w>h
@@ -41,6 +48,7 @@ noremap <C-l> <C-w>l
 imap ii <Esc>
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
+set textwidth=0
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |
     \ set softtabstop=4 |
