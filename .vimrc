@@ -23,7 +23,8 @@ nnoremap <leader>gd :YcmCompleter GoToDefinition<CR>
 
 let g:ctrlp_max_files=10000
 let g:ctrlp_max_depth=40
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*pyc,*/tsenv/*,*/venv/*,*/vendor/*,*/node_modules/*
+set wildignore+=*/node_modules/*,_site,*/__pycache__/,*/vendor/*,*/tsenv/*,*/venv/*,*/target/*,*/.vim$,\~$,*/.log,*/.aux,*/.cls,*/.aux,*/.bbl,*/.blg,*/.fls,*/.fdb*/,*/.toc,*/.out,*/.glo,*/.log,*/.ist,*/.fdb_latexmk,*sqp,*.pyc,*.zip,*.swp,*.so
+
 
 let g:ale_linters = {
 \   'python': ['flake8'],
@@ -46,7 +47,7 @@ noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 
 imap ii <Esc>
-let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+let NERDTreeIgnore=['\.pyc$', '\~$', '__pycache__', 'node_modules', '.git'] "ignore files in NERDTree
 
 set textwidth=0
 au BufNewFile,BufRead *.py
