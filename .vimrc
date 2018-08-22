@@ -12,9 +12,13 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'w0rp/ale'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'bling/vim-bufferline'
 
-autocmd vimenter * NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+nmap <F6> :NERDTreeToggle<CR>
+
+nnoremap <Tab> :bnext<CR>      
+nnoremap <S-Tab> :bprevious<CR>
 
 set number
 let mapleader = ","
