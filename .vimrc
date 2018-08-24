@@ -13,12 +13,14 @@ Plugin 'vim-scripts/indentpython.vim'
 Plugin 'w0rp/ale'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'bling/vim-bufferline'
+Plugin 'fatih/vim-go'
 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nmap <F6> :NERDTreeToggle<CR>
 
 nnoremap <Tab> :bnext<CR>      
 nnoremap <S-Tab> :bprevious<CR>
+let g:go_fmt_command = "goimports"
 
 set number
 let mapleader = ","
