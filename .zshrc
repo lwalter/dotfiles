@@ -8,6 +8,9 @@ setopt histignorealldups sharehistory
 
 # Use emacs keybindings even if our EDITOR is set to vi
 bindkey -e
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+bindkey '^H' backward-kill-word
 
 # Set GOPATH
 export PATH=$PATH:/usr/local/go/bin
