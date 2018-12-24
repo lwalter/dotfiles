@@ -13,6 +13,7 @@ Plugin 'vim-scripts/indentpython.vim'
 Plugin 'w0rp/ale'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'fatih/vim-go'
+Plugin 'mattn/emmet-vim'
 
 set number
 let mapleader = ","
@@ -62,7 +63,7 @@ set wildignore+=*/node_modules/*,_site,*/__pycache__/,*/vendor/*,*/tsenv/*,*/ven
 
 " ALE settings
 let g:ale_linters = {
-\   'python': ['flake8'],
+\   'python': ['pylint'],
 \   'markdown': ['markdownlint'],
 \   'javascript': ['eslint'],
 \}
