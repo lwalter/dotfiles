@@ -14,6 +14,7 @@ Plugin 'w0rp/ale'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'fatih/vim-go'
 Plugin 'mattn/emmet-vim'
+Plugin 'Raimondi/delimitMate'
 
 set number
 let mapleader = ","
@@ -36,6 +37,10 @@ let g:airline#extensions#tabline#enabled = 1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 nmap <F6> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['\.pyc$', '\~$', '__pycache__', 'node_modules', '.git'] "ignore files in NERDTree
+
+au FileType *.md let b:delimitMate_quotes = "\" ' "
+au FileType *.md let b:delimitMate_nesting_quotes = ['`']
+au FileType python let b:delimitMate_nesting_quotes = ['"']
 
 " vim-go settings
 map <C-n> :cnext<CR>
@@ -65,16 +70,18 @@ set wildignore+=*/node_modules/*,_site,*/__pycache__/,*/vendor/*,*/tsenv/*,*/ven
 
 " ALE settings
 let g:ale_linters = {
-\   'python': ['pylint'],
+\   'python': ['flake8'],
 \   'markdown': ['markdownlint'],
 \   'javascript': ['eslint'],
 \}
 
 let g:ale_fixers = {
-\   'python': ['autopep8'],
+\   'python': ['black'],
 \   'javascript': ['eslint']
 \}
 
+"let g:ale_python_pylint_options = '--load-plugins pylint_django'
+let g:ale_python_black_options = '--line-length 80'
 let g:ale_fix_on_save = 1
 
 au BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
@@ -100,6 +107,7 @@ au BufNewFile,BufRead *.md
     \ set tabstop=2 |
     \ set softtabstop=2 |
     \ set shiftwidth=2 |
+    \ set textwidth=79 |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix
