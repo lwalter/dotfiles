@@ -5,6 +5,8 @@ PROMPT='[%(?.%F{green}√.%F{red}?)%f %n@%m %~]$ '
 
 setopt histignorealldups sharehistory
 
+export TERM=xterm-256color
+
 # Use emacs keybindings even if our EDITOR is set to vi
 bindkey -e
 bindkey "^[[1;5C" forward-word

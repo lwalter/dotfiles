@@ -9,7 +9,7 @@
 
 dir=~/dotfiles                    # dotfiles directory
 olddir=~/dotfiles_old             # old dotfiles backup directory
-files=".vimrc .zshrc .i3/config .i3/i3blocks.conf wallpaper.jpg .gtkrc-2.0 .config/gtk-3.0/settings.ini .config/gtk-4.0/settings.ini"
+files=".tmux.conf .vimrc .zshrc .i3/config .i3/i3blocks.conf wallpaper.jpg .gtkrc-2.0 .config/gtk-3.0/settings.ini .config/gtk-4.0/settings.ini"
 
 echo "INSTALL ARK-DARKER FOR CHROME MANULLLY"
 
