@@ -15,6 +15,8 @@ Plugin 'Valloric/YouCompleteMe'
 Plugin 'fatih/vim-go'
 Plugin 'mattn/emmet-vim'
 Plugin 'Raimondi/delimitMate'
+Plugin 'joshdick/onedark.vim'
+Plugin 'tomasiser/vim-code-dark'
 
 set number
 let mapleader = ","
@@ -128,15 +130,23 @@ au BufNewFile,BufRead *.js
     \ set autoindent |
     \ set fileformat=unix
 
+call vundle#end()
 let python_highlight_all = 1
 syntax on
 
-call vundle#end()
 set termguicolors
 set t_8f=[38;2;%lu;%lu;%lum
 set t_8b=[48;2;%lu;%lu;%lum
-set background=dark
-let ayucolor="mirage"
-colorscheme ayu
-let g:airline_theme='ayu_mirage'
+
+"colorscheme codedark
+"let g:airline_theme='codedark'
+
+
+colorscheme onedark
+let g:airline_theme='onedark'
+
+"set background=dark
+"let ayucolor="mirage"
+"colorscheme ayu
+"let g:airline_theme='ayu_mirage'
 filetype plugin indent on
