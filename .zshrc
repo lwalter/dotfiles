@@ -17,9 +17,6 @@ bindkey '^H' backward-kill-word
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 
-# Hook for direnv
-eval "$(direnv hook zsh)"
-
 HISTSIZE=100000
 SAVEHIST=100000
 HISTFILE=~/.zsh_history
@@ -45,4 +42,12 @@ zstyle ':completion:*' verbose true
 
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
-if [ /usr/local/bin/kubectl ]; then source <(kubectl completion zsh); fi
+
+if [ -f /usr/local/bin/kubectl ]; then
+	source <(kubectl completion zsh);
+fi
+
+# Hook for direnv
+if [ -f /usr/bin/direnv ]; then
+	eval "$(direnv hook zsh)";
+fi
