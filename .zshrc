@@ -17,6 +17,7 @@ bindkey '^H' backward-kill-word
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 
+export PATH=$PATH:~/.local/bin
 HISTSIZE=100000
 SAVEHIST=100000
 HISTFILE=~/.zsh_history

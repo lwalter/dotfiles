@@ -105,7 +105,7 @@ au BufNewFile,BufRead *.json
     \ set autoindent |
     \ set fileformat=unix
 
-au BufNewFile,BufRead *.md
+au BufNewFile,BufRead *.md,*.yaml,*yml
     \ set tabstop=2 |
     \ set softtabstop=2 |
     \ set shiftwidth=2 |
