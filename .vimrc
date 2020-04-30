@@ -59,6 +59,8 @@ let g:go_highlight_types = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_extra_types = 1
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 
 " YCM settings
 autocmd FileType python,javascript nmap <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
@@ -72,7 +74,7 @@ set wildignore+=*/node_modules/*,_site,*/__pycache__/,*/vendor/*,*/tsenv/*,*/ven
 
 " ALE settings
 let g:ale_linters = {
-\   'python': ['flake8'],
+\   'python': ['flake8', 'mypy'],
 \   'markdown': ['markdownlint'],
 \   'javascript': ['eslint'],
 \}
@@ -84,6 +86,8 @@ let g:ale_fixers = {
 
 "let g:ale_python_pylint_options = '--load-plugins pylint_django'
 let g:ale_python_black_options = '--line-length 80'
+let g:ale_python_black_auto_pipenv = 1
+let g:ale_python_mypy_auto_pipenv = 1
 let g:ale_fix_on_save = 1
 
 au BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
@@ -97,10 +101,18 @@ au BufNewFile,BufRead *.py
     \ set autoindent |
     \ set fileformat=unix
 
-au BufNewFile,BufRead *.json
+au BufNewFile,BufRead *.json,*.yml,*.yaml,*.tf
     \ set tabstop=2 |
     \ set softtabstop=2 |
     \ set shiftwidth=2 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
+
+au BufNewFile,BufRead .gitlab-ci.yml
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix
@@ -115,9 +127,9 @@ au BufNewFile,BufRead *.md,*.yaml,*yml
     \ set fileformat=unix
 
 au BufNewFile,BufRead *.html
-    \ set tabstop=2 |
-    \ set softtabstop=2 |
-    \ set shiftwidth=2 |
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix
@@ -133,6 +145,8 @@ au BufNewFile,BufRead *.js
 call vundle#end()
 let python_highlight_all = 1
 syntax on
+
+setlocal spell spelllang=en_us
 
 set termguicolors
 set t_8f=[38;2;%lu;%lu;%lum
