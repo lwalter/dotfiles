@@ -10,7 +10,7 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/indentpython.vim'
-Plugin 'w0rp/ale'
+Plugin 'dense-analysis/ale'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'fatih/vim-go'
 Plugin 'mattn/emmet-vim'
@@ -80,19 +80,27 @@ let g:ale_linters = {
 \}
 
 let g:ale_fixers = {
-\   'python': ['black'],
-\   'javascript': ['eslint']
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['black', 'isort'],
+\   'javascript': ['eslint'],
+\   'typescript': ['prettier']
 \}
 
+let g:ale_linter_aliases = {'typescriptreact': 'typescript'}
+
+"let g:ale_python_auto_pipenv = 1
 "let g:ale_python_pylint_options = '--load-plugins pylint_django'
+let g:ale_python_isort_options = '--profile black -l 80'
 let g:ale_python_black_options = '--line-length 80'
-let g:ale_python_black_auto_pipenv = 1
+let g:ale_python_black_auto_pipenv = 0
+let g:ale_python_black_change_directory = 0
+let g:ale_python_flake8_auto_pipenv = 0
 let g:ale_python_mypy_auto_pipenv = 1
 let g:ale_fix_on_save = 1
 
-au BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4 
+au BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 
-au BufNewFile,BufRead *.py
+au BufNewFile,BufRead *.py,*.sh
     \ set tabstop=4 |
     \ set softtabstop=4 |
     \ set shiftwidth=4 |
@@ -105,6 +113,7 @@ au BufNewFile,BufRead *.json,*.yml,*.yaml,*.tf
     \ set tabstop=2 |
     \ set softtabstop=2 |
     \ set shiftwidth=2 |
+    \ set textwidth=160 |
     \ set expandtab |
     \ set autoindent |
     \ set fileformat=unix
@@ -151,10 +160,6 @@ setlocal spell spelllang=en_us
 set termguicolors
 set t_8f=[38;2;%lu;%lu;%lum
 set t_8b=[48;2;%lu;%lu;%lum
-
-"colorscheme codedark
-"let g:airline_theme='codedark'
-
 
 colorscheme onedark
 let g:airline_theme='onedark'
