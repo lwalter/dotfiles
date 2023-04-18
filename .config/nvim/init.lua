@@ -31,6 +31,13 @@ require("packer").startup(function(use)
 	use({ "jose-elias-alvarez/null-ls.nvim" }) -- Snippets plugin
 	use({ "nvim-lua/plenary.nvim" })
 	use({ "Raimondi/delimitMate" })
+	use({
+		"nvim-treesitter/nvim-treesitter",
+		run = function()
+			local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
+			ts_update()
+		end,
+	})
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
 	if packer_bootstrap then
@@ -60,6 +67,7 @@ nmap("<Tab>", ":bnext<CR>")
 nmap("<S-Tab>", ":bprevious<CR>")
 nmap("<C-p>", ":GFiles<CR>")
 nmap("<F6>", ":NvimTreeToggle<CR>")
+nmap("<CR>", ":noh<CR><CR>") -- Clear highlighting on enter
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -83,6 +91,14 @@ require("nvim-tree").setup()
 require("lualine").setup({
 	options = {
 		theme = "onedark",
+	},
+	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { "branch", "diagnostics" },
+		lualine_c = { { "filename", path = 2 } },
+		lualine_x = { "filetype" },
+		lualine_y = { "progress" },
+		lualine_z = { "location" },
 	},
 })
 require("onedark").setup({
@@ -153,6 +169,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 local cmp = require("cmp")
+local luasnip = require("luasnip")
 cmp.setup({
 	snippet = {
 		expand = function(args)
@@ -194,6 +211,7 @@ cmp.setup({
 local null_ls = require("null-ls")
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 null_ls.setup({
+	debug = true,
 	on_attach = function(client, bufnr)
 		if client.supports_method("textDocument/formatting") then
 			vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
@@ -201,7 +219,7 @@ null_ls.setup({
 				group = augroup,
 				buffer = bufnr,
 				callback = function()
-					vim.lsp.buf.format({ bufnr = bufnr })
+					vim.lsp.buf.format({ bufnr = bufnr, timeout_ms = 3000 })
 				end,
 			})
 		end
@@ -224,5 +242,11 @@ null_ls.setup({
 		null_ls.builtins.diagnostics.flake8,
 		null_ls.builtins.formatting.stylua,
 		null_ls.builtins.formatting.terraform_fmt,
+	},
+})
+local treesitter = require("nvim-treesitter.configs")
+treesitter.setup({
+	highlight = {
+		enable = true,
 	},
 })
