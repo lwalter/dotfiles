@@ -1,6 +1,3 @@
--- -----------------------------------------------------------------------------------------------
--- Plugin installation
--- -----------------------------------------------------------------------------------------------
 -- Automatically install Packer if it isn"t installed
 local ensure_packer = function()
 	local fn = vim.fn
@@ -21,16 +18,20 @@ require("packer").startup(function(use)
 	use({ "junegunn/fzf", run = ":call fzf#install()" })
 	use({ "junegunn/fzf.vim" })
 	use({ "nvim-lualine/lualine.nvim" })
+	-- https://www.nerdfonts.com/
+	-- iterm2->Settings->Profiles->Text->Font
+	-- Mononoki Nerd Font Mono
 	use({ "nvim-tree/nvim-web-devicons" })
 	use({ "nvim-tree/nvim-tree.lua" })
 	use({ "neovim/nvim-lspconfig" })
 	use({ "hrsh7th/nvim-cmp" }) -- Autocompletion plugin
 	use({ "hrsh7th/cmp-nvim-lsp" }) -- LSP source for nvim-cmp
 	use({ "saadparwaiz1/cmp_luasnip" }) -- Snippets source for nvim-cmp
-	use({ "L3MON4D3/LuaSnip" }) -- Snippets plugin
-	use({ "jose-elias-alvarez/null-ls.nvim" }) -- Snippets plugin
-	use({ "nvim-lua/plenary.nvim" })
+	use({ "L3MON4D3/LuaSnip" }) -- Snippets plugin for nvim-cmp
+	use({ "jose-elias-alvarez/null-ls.nvim" }) -- Snippets plugin for formatting?
+	use({ "nvim-lua/plenary.nvim" }) -- Required for null-ls
 	use({ "Raimondi/delimitMate" })
+	-- Syntax highlighting
 	use({
 		"nvim-treesitter/nvim-treesitter",
 		run = function()
@@ -94,8 +95,8 @@ require("lualine").setup({
 	},
 	sections = {
 		lualine_a = { "mode" },
-		lualine_b = { "branch", "diagnostics" },
-		lualine_c = { { "filename", path = 2 } },
+		lualine_b = { "diagnostics" },
+		lualine_c = { { "filename", path = 1 } },
 		lualine_x = { "filetype" },
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
@@ -112,6 +113,7 @@ local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 vim.o.updatetime = 250
+-- Open the diagnostic pane
 vim.api.nvim_create_autocmd("CursorHold", {
 	buffer = bufnr,
 	callback = function()
@@ -126,6 +128,10 @@ vim.api.nvim_create_autocmd("CursorHold", {
 		vim.diagnostic.open_float(nil, opts)
 	end,
 })
+--lspconfig.terraformls.setup({})
+--lspconfig.tflint.setup({})
+-- many of these are installed via npm
+-- nvm use 18.15.0
 lspconfig.pyright.setup({
 	capabilities = capabilities,
 	settings = {
@@ -133,6 +139,7 @@ lspconfig.pyright.setup({
 			autoImportCompletion = true,
 		},
 		python = {
+			-- Use the SaaS container for python deps
 			venvPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv",
 			pythonPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv/bin/python",
 			diagnosticMode = "openFilesOnly",
@@ -143,6 +150,18 @@ lspconfig.gopls.setup({
 	capabilities = capabilities,
 	settings = {},
 })
+-- https://github.com/hashicorp/terraform-ls/releases
+--lspconfig.terraformls.setup({
+--	capabilities = capabilities,
+--	settings = {},
+--})
+---- curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+--lspconfig.tflint.setup({
+--	capabilities = capabilities,
+--	settings = {},
+--})
+
+-- Setup Lsp keymaps
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
@@ -164,10 +183,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
 		vim.keymap.set("n", "<leader>f", function()
-			vim.lsp.buf.format({ async = true })
+			vim.lsp.buf.format({ async = true, bufnr = opts.buffer, timeout_ms = 3000 })
 		end, opts)
 	end,
 })
+
+-- Setup auto complete
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 cmp.setup({
@@ -208,6 +229,9 @@ cmp.setup({
 		{ name = "luasnip" },
 	},
 })
+
+-- Remove null-ls eventually
+-- Runs formatters on save
 local null_ls = require("null-ls")
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 null_ls.setup({
@@ -244,6 +268,9 @@ null_ls.setup({
 		null_ls.builtins.formatting.terraform_fmt,
 	},
 })
+------ end null-ls
+
+-- Syntax highlighting
 local treesitter = require("nvim-treesitter.configs")
 treesitter.setup({
 	highlight = {
