@@ -15,22 +15,26 @@ local packer_bootstrap = ensure_packer()
 require("packer").startup(function(use)
 	use({ "wbthomason/packer.nvim" })
 	use({ "navarasu/onedark.nvim" })
-	use({ "junegunn/fzf", run = ":call fzf#install()" })
-	use({ "junegunn/fzf.vim" })
+	use({
+		"nvim-telescope/telescope.nvim", -- Fuzzy find
+		tag = "0.1.2",
+		requires = { { "nvim-lua/plenary.nvim" } },
+	})
 	use({ "nvim-lualine/lualine.nvim" })
 	-- https://www.nerdfonts.com/
 	-- iterm2->Settings->Profiles->Text->Font
 	-- Mononoki Nerd Font Mono
 	use({ "nvim-tree/nvim-web-devicons" })
-	use({ "nvim-tree/nvim-tree.lua" })
-	use({ "neovim/nvim-lspconfig" })
+	use({ "nvim-tree/nvim-tree.lua" }) -- Filetree
+	use({ "williamboman/mason.nvim" }) -- Installation of LSPs
+	use({ "williamboman/mason-lspconfig.nvim" })
+	use({ "neovim/nvim-lspconfig" }) -- LSP configuration
 	use({ "hrsh7th/nvim-cmp" }) -- Autocompletion plugin
 	use({ "hrsh7th/cmp-nvim-lsp" }) -- LSP source for nvim-cmp
 	use({ "saadparwaiz1/cmp_luasnip" }) -- Snippets source for nvim-cmp
 	use({ "L3MON4D3/LuaSnip" }) -- Snippets plugin for nvim-cmp
-	use({ "jose-elias-alvarez/null-ls.nvim" }) -- Snippets plugin for formatting?
-	use({ "nvim-lua/plenary.nvim" }) -- Required for null-ls
 	use({ "Raimondi/delimitMate" })
+	use({ "mhartington/formatter.nvim" }) -- Autoformatter
 	-- Syntax highlighting
 	use({
 		"nvim-treesitter/nvim-treesitter",
@@ -46,29 +50,17 @@ require("packer").startup(function(use)
 	end
 end)
 
-function map(mode, shortcut, command)
-	vim.api.nvim_set_keymap(mode, shortcut, command, { noremap = true, silent = true })
-end
-
-function nmap(shortcut, command)
-	map("n", shortcut, command)
-end
-
-function imap(shortcut, command)
-	map("i", shortcut, command)
-end
-
 vim.g.mapleader = ","
-imap("ii", "<Esc>")
-nmap("<C-h>", "<C-w>h")
-nmap("<C-j>", "<C-w>j")
-nmap("<C-k>", "<C-w>k")
-nmap("<C-l>", "<C-w>l")
-nmap("<Tab>", ":bnext<CR>")
-nmap("<S-Tab>", ":bprevious<CR>")
-nmap("<C-p>", ":GFiles<CR>")
-nmap("<F6>", ":NvimTreeToggle<CR>")
-nmap("<CR>", ":noh<CR><CR>") -- Clear highlighting on enter
+vim.keymap.set("i", "ii", "<Esc>")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+vim.keymap.set("n", "<Tab>", ":bnext<CR>")
+vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>")
+
+-- Clear highlighting on enter
+vim.keymap.set("n", "<CR>", ":noh<CR><CR>")
 
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -82,13 +74,23 @@ vim.opt.syntax = "ON"
 vim.opt.spelllang = "en_us"
 vim.opt.termguicolors = true
 
--- [[ Whitespace ]]
+-- Whitespace
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.tabstop = 4
 
+-- Setup keymaps for fuzzy find
+local builtin = require("telescope.builtin")
+vim.keymap.set("n", "<C-p>", builtin.git_files, {})
+vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
+vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+
+-- Configure file tree
 require("nvim-tree").setup()
+vim.keymap.set("n", "<F6>", ":NvimTreeToggle<CR>")
+
+-- Configure lualine
 require("lualine").setup({
 	options = {
 		theme = "onedark",
@@ -102,16 +104,123 @@ require("lualine").setup({
 		lualine_z = { "location" },
 	},
 })
+
+-- Configure theming
 require("onedark").setup({
 	code_style = { comments = "none" },
 })
 require("onedark").load()
 
--- LSP, autocompletion
-local lspconfig = require("lspconfig")
--- Add additional capabilities supported by nvim-cmp
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+-- Syntax highlighting
+local treesitter = require("nvim-treesitter.configs")
+treesitter.setup({
+	ensure_installed = {
+		"lua",
+		"vim",
+		"python",
+		"go",
+		"css",
+		"dockerfile",
+		"bash",
+		"typescript",
+		"elixir",
+		"json",
+		"rust",
+		"markdown",
+		"terraform",
+		"make",
+		"css",
+		"yaml",
+		"toml",
+	},
+	highlight = {
+		enable = true,
+	},
+})
 
+-- LSP installation and set up
+require("mason").setup({})
+require("mason-lspconfig").setup({
+	ensure_installed = { "pyright", "gopls", "bashls" },
+})
+local lspconfig = require("lspconfig")
+lspconfig.bashls.setup({
+	capabilities = capabilities,
+})
+lspconfig.pyright.setup({
+	capabilities = capabilities,
+	settings = {
+		pyright = {
+			autoImportCompletion = true,
+		},
+		python = {
+			-- Use the SaaS container for python deps
+			venvPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv",
+			pythonPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv/bin/python",
+			diagnosticMode = "openFilesOnly",
+		},
+	},
+})
+lspconfig.gopls.setup({
+	on_attach = function(client, bufnr)
+		vim.api.nvim_create_autocmd("BufWritePre", {
+			group = vim.api.nvim_create_augroup("FixGoImports", { clear = true }),
+			pattern = "*.go",
+			callback = function()
+				-- ensure imports are sorted and grouped correctly
+				vim.lsp.buf.format({ async = false, bufnr = bufnr, timeout_ms = 3000 })
+				local params = vim.lsp.util.make_range_params()
+				params.context = { only = { "source.organizeImports" } }
+				local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+				for _, res in pairs(result or {}) do
+					for _, r in pairs(res.result or {}) do
+						if r.edit then
+							vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
+						else
+							vim.lsp.buf.execute_command(r.command)
+						end
+					end
+				end
+			end,
+		})
+	end,
+	capabilities = capabilities,
+	settings = {
+		gopls = {
+			gofumpt = true,
+		},
+	},
+})
+
+-- Setup Lsp keymaps
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+	callback = function(ev)
+		-- Buffer local mappings.
+		-- See `:help vim.lsp.*` for documentation on any of the below functions
+		local opts = { buffer = ev.buf }
+		vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, opts)
+		vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, opts)
+		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
+		vim.keymap.set("n", "<leader>f", function()
+			vim.lsp.buf.format({ async = true, bufnr = opts.buffer, timeout_ms = 3000 })
+		end, opts)
+		--vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+		--vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+		--vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+		--vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
+		--vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
+		--vim.keymap.set("n", "<space>wl", function()
+		--  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+		--end, opts)
+	end,
+})
+
+-- Autocompletion
+-- Reduce the amount of time it takes for diagnostics pane to appear
 vim.o.updatetime = 250
 -- Open the diagnostic pane
 vim.api.nvim_create_autocmd("CursorHold", {
@@ -128,67 +237,10 @@ vim.api.nvim_create_autocmd("CursorHold", {
 		vim.diagnostic.open_float(nil, opts)
 	end,
 })
---lspconfig.terraformls.setup({})
---lspconfig.tflint.setup({})
--- many of these are installed via npm
--- nvm use 18.15.0
-lspconfig.pyright.setup({
-	capabilities = capabilities,
-	settings = {
-		pyright = {
-			autoImportCompletion = true,
-		},
-		python = {
-			-- Use the SaaS container for python deps
-			venvPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv",
-			pythonPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv/bin/python",
-			diagnosticMode = "openFilesOnly",
-		},
-	},
-})
-lspconfig.gopls.setup({
-	capabilities = capabilities,
-	settings = {},
-})
--- https://github.com/hashicorp/terraform-ls/releases
---lspconfig.terraformls.setup({
---	capabilities = capabilities,
---	settings = {},
---})
----- curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
---lspconfig.tflint.setup({
---	capabilities = capabilities,
---	settings = {},
---})
-
--- Setup Lsp keymaps
-vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-	callback = function(ev)
-		-- Buffer local mappings.
-		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		local opts = { buffer = ev.buf }
-		vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, opts)
-		vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, opts)
-		--vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-		--vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-		--vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-		--vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
-		--vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
-		--vim.keymap.set("n", "<space>wl", function()
-		--  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-		--end, opts)
-		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
-		vim.keymap.set("n", "<leader>f", function()
-			vim.lsp.buf.format({ async = true, bufnr = opts.buffer, timeout_ms = 3000 })
-		end, opts)
-	end,
-})
 
 -- Setup auto complete
+-- Add additional capabilities supported by nvim-cmp
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 cmp.setup({
@@ -230,50 +282,66 @@ cmp.setup({
 	},
 })
 
--- Remove null-ls eventually
--- Runs formatters on save
-local null_ls = require("null-ls")
-local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-null_ls.setup({
-	debug = true,
-	on_attach = function(client, bufnr)
-		if client.supports_method("textDocument/formatting") then
-			vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				group = augroup,
-				buffer = bufnr,
-				callback = function()
-					vim.lsp.buf.format({ bufnr = bufnr, timeout_ms = 3000 })
-				end,
-			})
-		end
-	end,
-	sources = {
-		debug = true,
-		null_ls.builtins.formatting.prettier.with({
-			filetypes = { "json", "yaml", "markdown" },
-		}),
-		null_ls.builtins.formatting.goimports,
-		null_ls.builtins.formatting.gofumpt,
-		null_ls.builtins.formatting.isort.with({
-			command = "isort",
-			extra_args = { "-p", "black" },
-		}),
-		null_ls.builtins.formatting.black.with({
-			command = "black",
-			extra_args = { "--line-length", "80" },
-		}),
-		null_ls.builtins.diagnostics.flake8,
-		null_ls.builtins.formatting.stylua,
-		null_ls.builtins.formatting.terraform_fmt,
+-- Format on save
+local util = require("formatter.util")
+-- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+require("formatter").setup({
+	-- Enable or disable logging
+	logging = true,
+	-- Set the log level
+	log_level = vim.log.levels.WARN,
+	-- All formatter configurations are opt-in
+	filetype = {
+		lua = {
+			require("formatter.filetypes.lua").stylua,
+		},
+		terraform = {
+			require("formatter.filetypes.terraform").terraformfmt,
+		},
+		python = {
+			function()
+				return {
+					exe = "isort",
+					args = {
+						"-q",
+						"--profile black",
+						"-",
+					},
+					stdin = true,
+				}
+			end,
+			function()
+				return {
+					exe = "black",
+					args = {
+						"-q",
+						"--line-length 80",
+						"--stdin-filename",
+						util.escape_path(util.get_current_buffer_file_path()),
+						"--",
+						"-",
+					},
+					stdin = true,
+				}
+			end,
+		},
+		json = {
+			require("formatter.filetypes.json").prettier,
+		},
+		yaml = {
+			require("formatter.filetypes.yaml").prettier,
+		},
+		markdown = {
+			require("formatter.filetypes.markdown").prettier,
+		},
 	},
 })
------- end null-ls
 
--- Syntax highlighting
-local treesitter = require("nvim-treesitter.configs")
-treesitter.setup({
-	highlight = {
-		enable = true,
-	},
+local format_grp = vim.api.nvim_create_augroup("FormatAutogroup", {})
+vim.api.nvim_create_autocmd("BufWritePost", {
+	callback = function()
+		vim.cmd.FormatWrite()
+	end,
+	group = format_grp,
+	pattern = "*",
 })

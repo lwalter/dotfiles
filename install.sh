@@ -2,13 +2,15 @@
 
 sudo apt-get install zsh i3 feh lxappearance i3blocks cmake build-essential python-dev python3-dev tmux curl
 
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+chmod u+x nvim.appimage
+sudo mv nvim.appimage ~/.local/bin/nvim
 
 # install go
-curl https://golang.org/dl/go1.16.7.linux-amd64.tar.gz --output go1.16.7.linux-amd64.tar.gz
+curl -LO https://go.dev/dl/go1.20.6.linux-amd64.tar.gz --output go1.20.6.linux-amd64.tar.gz
 rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.16.7.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.20.6.linux-amd64.tar.gz
+rm go1.20.6.linux-amd64.tar.gz
 
 # install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -35,9 +37,6 @@ done
 
 source ~/.zshrc
 nvm install node
-
-# cd ~/.vim/bundle/YouCompleteMe
-# python3 install.py --all
 
 # install docker
 sudo apt-get update
