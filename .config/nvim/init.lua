@@ -130,25 +130,60 @@ treesitter.setup({
 		"terraform",
 		"make",
 		"css",
-		"yaml",
+		--"yaml",
 		"toml",
+		"ocaml",
 	},
 	highlight = {
 		enable = true,
 	},
 })
 
+local format_grp = vim.api.nvim_create_augroup("FormatAutogroup", {})
+on_attach = function(client, bufnr)
+	local filetype = vim.filetype.match({ buf = bufnr })
+	-- TODO why am I doing this?
+	if filetype == "go" then
+		local params = vim.lsp.util.make_range_params()
+		params.context = { only = { "source.organizeImports" } }
+		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+		for _, res in pairs(result or {}) do
+			for _, r in pairs(res.result or {}) do
+				if r.edit then
+					vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
+				else
+					vim.lsp.buf.execute_command(r.command)
+				end
+			end
+		end
+	end
+
+	vim.api.nvim_create_autocmd("BufWritePre", {
+		callback = function()
+			vim.lsp.buf.format({ async = false, bufnr = bufnr, timeout_ms = 3000 })
+		end,
+		group = format_grp,
+		buffer = bufnr,
+	})
+end
+
 -- LSP installation and set up
 require("mason").setup({})
 require("mason-lspconfig").setup({
-	ensure_installed = { "pyright", "gopls", "bashls" },
+	ensure_installed = { "pyright", "gopls", "bashls", "ocamllsp" },
 })
 local lspconfig = require("lspconfig")
 lspconfig.bashls.setup({
 	capabilities = capabilities,
+	on_attach = on_attach,
+})
+lspconfig.ocamllsp.setup({
+	capabilities = capabilities,
+	on_attach = on_attach,
 })
 lspconfig.pyright.setup({
 	capabilities = capabilities,
+	on_attach = on_attach,
 	settings = {
 		pyright = {
 			autoImportCompletion = true,
@@ -162,28 +197,7 @@ lspconfig.pyright.setup({
 	},
 })
 lspconfig.gopls.setup({
-	on_attach = function(client, bufnr)
-		vim.api.nvim_create_autocmd("BufWritePre", {
-			group = vim.api.nvim_create_augroup("FixGoImports", { clear = true }),
-			pattern = "*.go",
-			callback = function()
-				-- ensure imports are sorted and grouped correctly
-				vim.lsp.buf.format({ async = false, bufnr = bufnr, timeout_ms = 3000 })
-				local params = vim.lsp.util.make_range_params()
-				params.context = { only = { "source.organizeImports" } }
-				local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
-				for _, res in pairs(result or {}) do
-					for _, r in pairs(res.result or {}) do
-						if r.edit then
-							vim.lsp.util.apply_workspace_edit(r.edit, "UTF-8")
-						else
-							vim.lsp.buf.execute_command(r.command)
-						end
-					end
-				end
-			end,
-		})
-	end,
+	on_attach = on_attach,
 	capabilities = capabilities,
 	settings = {
 		gopls = {
@@ -205,10 +219,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 		vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 		vim.keymap.set("n", "<leader>f", function()
 			vim.lsp.buf.format({ async = true, bufnr = opts.buffer, timeout_ms = 3000 })
 		end, opts)
-		--vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 		--vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
 		--vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 		--vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
@@ -337,7 +351,6 @@ require("formatter").setup({
 	},
 })
 
-local format_grp = vim.api.nvim_create_augroup("FormatAutogroup", {})
 vim.api.nvim_create_autocmd("BufWritePost", {
 	callback = function()
 		vim.cmd.FormatWrite()
