@@ -1,68 +1,57 @@
+-- Setup Nerd Fonts
+-- https://www.nerdfonts.com/
+-- iterm2->Settings->Profiles->Text->Font
+-- Mononoki Nerd Font Mono
 -- Disable netrw
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
--- Automatically install Packer if it isn"t installed
-local ensure_packer = function()
-    local fn = vim.fn
-    local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-    if fn.empty(fn.glob(install_path)) > 0 then
-        fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
-        vim.cmd("packadd packer.nvim")
-        return true
-    end
-    return false
-end
-
-local packer_bootstrap = ensure_packer()
-
-require("packer").startup(function(use)
-    use({ "wbthomason/packer.nvim" })
-    use({ "navarasu/onedark.nvim" })
-    use({ "folke/tokyonight.nvim" })
-    use({ "folke/neodev.nvim" })
-    use({
-        "nvim-telescope/telescope.nvim", -- Fuzzy find
-        tag = "0.1.2",
-        requires = { { "nvim-lua/plenary.nvim" } },
-    })
-    use({ "nvim-lualine/lualine.nvim" })
-    -- https://www.nerdfonts.com/
-    -- iterm2->Settings->Profiles->Text->Font
-    -- Mononoki Nerd Font Mono
-    use({ "nvim-tree/nvim-web-devicons" })
-    use({ "nvim-tree/nvim-tree.lua" })  -- Filetree
-    use({ "williamboman/mason.nvim" })  -- Installation of LSPs
-    use({ "williamboman/mason-lspconfig.nvim" })
-    use({ "neovim/nvim-lspconfig" })    -- LSP configuration
-    use({ "hrsh7th/nvim-cmp" })         -- Autocompletion plugin
-    use({ "hrsh7th/cmp-nvim-lsp" })     -- LSP source for nvim-cmp
-    use({ "saadparwaiz1/cmp_luasnip" }) -- Snippets source for nvim-cmp
-    use({ "L3MON4D3/LuaSnip" })         -- Snippets plugin for nvim-cmp
-    use({ "Raimondi/delimitMate" })
-    --use({ "folke/neodev.nvim" })
-    use({ "mhartington/formatter.nvim" }) -- Autoformatter
-    -- Syntax highlighting
-    use({
-        "nvim-treesitter/nvim-treesitter",
-        requires = { { "nvim-treesitter/nvim-treesitter-textobjects" } },
-        run = function()
-            local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
-            ts_update()
-        end,
-    })
-    use({
-        "kylechui/nvim-surround",
-        tag = "*", -- Use for stability; omit to use `main` branch for the latest features
-    })
-    -- Automatically set up your configuration after cloning packer.nvim
-    -- Put this at the end after all plugins
-    if packer_bootstrap then
-        require("packer").sync()
-    end
-end)
-
 vim.g.mapleader = ","
+
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+    "navarasu/onedark.nvim",
+    "folke/tokyonight.nvim",
+    "folke/neodev.nvim",
+    "nvim-lualine/lualine.nvim",
+    "nvim-tree/nvim-web-devicons",
+    {
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.2',
+        dependencies = { 'nvim-lua/plenary.nvim' }
+    },
+    {
+        'nvim-treesitter/nvim-treesitter',
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter-textobjects',
+        },
+        build = ':TSUpdate',
+    },
+    "nvim-tree/nvim-tree.lua",    -- Filetree
+    "williamboman/mason.nvim",    -- Installation of LSPs
+    "williamboman/mason-lspconfig.nvim",
+    "neovim/nvim-lspconfig",      -- LSP configuration
+    "hrsh7th/nvim-cmp",           -- Autocompletion plugin
+    "hrsh7th/cmp-nvim-lsp",       -- LSP source for nvim-cmp
+    "saadparwaiz1/cmp_luasnip",   -- Snippets source for nvim-cmp
+    "L3MON4D3/LuaSnip",           -- Snippets plugin for nvim-cmp
+    "windwp/nvim-autopairs",      -- Pair parens
+    "mhartington/formatter.nvim", -- Autoformatter
+    "github/copilot.vim",
+})
+
 vim.keymap.set("i", "ii", "<Esc>")
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
@@ -107,7 +96,6 @@ vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
 require("nvim-tree").setup()
 vim.keymap.set("n", "<F6>", ":NvimTreeToggle<CR>")
 
-require("nvim-surround").setup()
 
 -- Configure theming
 --require("onedark").setup({
@@ -182,10 +170,10 @@ treesitter.setup({
     incremental_selection = {
         enable = true,
         keymaps = {
-            init_selection = '<c-space>',
-            node_incremental = '<c-l>',
-            scope_incremental = '<c-k>',
-            node_decremental = '<c-h>',
+            init_selection = "<c-space>",
+            node_incremental = "<c-l>",
+            scope_incremental = "<c-k>",
+            node_decremental = "<c-h>",
         },
     },
     textobjects = {
@@ -275,6 +263,10 @@ require("mason-lspconfig").setup({
         "terraformls",
         "lua_ls",
     },
+})
+
+require("nvim-autopairs").setup({
+    disable_filetype = { "TelescopePrompt", "vim" },
 })
 local lspconfig = require("lspconfig")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -376,6 +368,11 @@ vim.api.nvim_create_autocmd("CursorHold", {
 
 -- Setup auto complete
 local cmp = require("cmp")
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+    'confirm_done',
+    cmp_autopairs.on_confirm_done()
+)
 local luasnip = require("luasnip")
 cmp.setup({
     snippet = {
