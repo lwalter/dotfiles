@@ -1,0 +1,11 @@
+[user]
+        name = Lucas Walter
+        email = me@lnwalter.com
+[core]
+        editor = nvim
+[branch]
+        autosetuprebase = always
+[pull]
+        rebase = preserve
+[init]
+        defaultBranch = main
