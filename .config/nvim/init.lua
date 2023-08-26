@@ -5,7 +5,6 @@
 -- Disable netrw
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
-
 vim.g.mapleader = ","
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -39,16 +38,16 @@ require("lazy").setup({
         },
         build = ':TSUpdate',
     },
-    "nvim-tree/nvim-tree.lua",    -- Filetree
-    "williamboman/mason.nvim",    -- Installation of LSPs
+    "nvim-tree/nvim-tree.lua",                          -- Filetree
+    "williamboman/mason.nvim",                          -- Installation of LSPs
     "williamboman/mason-lspconfig.nvim",
-    "neovim/nvim-lspconfig",      -- LSP configuration
-    "hrsh7th/nvim-cmp",           -- Autocompletion plugin
-    "hrsh7th/cmp-nvim-lsp",       -- LSP source for nvim-cmp
-    "saadparwaiz1/cmp_luasnip",   -- Snippets source for nvim-cmp
-    "L3MON4D3/LuaSnip",           -- Snippets plugin for nvim-cmp
-    "windwp/nvim-autopairs",      -- Pair parens
-    "mhartington/formatter.nvim", -- Autoformatter
+    "neovim/nvim-lspconfig",                            -- LSP configuration
+    "hrsh7th/nvim-cmp",                                 -- Autocompletion plugin
+    "hrsh7th/cmp-nvim-lsp",                             -- LSP source for nvim-cmp
+    "saadparwaiz1/cmp_luasnip",                         -- Snippets source for nvim-cmp
+    "L3MON4D3/LuaSnip",                                 -- Snippets plugin for nvim-cmp
+    { "windwp/nvim-autopairs", event = "InsertEnter" }, -- Pair parens
+    "mhartington/formatter.nvim",                       -- Autoformatter
     "github/copilot.vim",
 })
 
@@ -267,6 +266,9 @@ require("mason-lspconfig").setup({
 
 require("nvim-autopairs").setup({
     disable_filetype = { "TelescopePrompt", "vim" },
+    fast_wrap = {
+        map = "<C-w>",
+    },
 })
 local lspconfig = require("lspconfig")
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -348,24 +350,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 -- Autocompletion
--- Reduce the amount of time it takes for diagnostics pane to appear
-vim.o.updatetime = 250
--- Open the diagnostic pane
-vim.api.nvim_create_autocmd("CursorHold", {
-    buffer = bufnr,
-    callback = function()
-        local opts = {
-            focusable = false,
-            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-            border = "rounded",
-            source = "always",
-            prefix = " ",
-            scope = "cursor",
-        }
-        vim.diagnostic.open_float(nil, opts)
-    end,
-})
-
 -- Setup auto complete
 local cmp = require("cmp")
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
@@ -412,6 +396,24 @@ cmp.setup({
         { name = "luasnip" },
     },
 })
+
+-- Reduce the amount of time it takes for diagnostics pane to appear
+vim.o.updatetime = 250
+-- Open the diagnostic pane
+vim.api.nvim_create_autocmd("CursorHold", {
+    callback = function()
+        local opts = {
+            focusable = false,
+            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+            border = "rounded",
+            source = "always",
+            prefix = " ",
+            scope = "cursor",
+        }
+        vim.diagnostic.open_float(nil, opts)
+    end,
+})
+
 
 -- Format on save
 local util = require("formatter.util")
