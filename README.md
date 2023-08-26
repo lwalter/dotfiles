@@ -1,12 +1,19 @@
 # dotfiles
 
-Environment config files and list of standard software and tooling for every day work.
+## Managed
 
-## Software and tools
+- zsh
+- nvim
+- i3
+- tmux
+- git
+
+## Base installs
 
 - iterm2
 - [zsh](https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH#install-and-set-up-zsh-as-default)
 - tmux
+- i3
 - [neovim](https://github.com/neovim/neovim/releases/tag/stable)
 - [mononoki nerd font](https://www.nerdfonts.com/)
 - [go](https://go.dev/doc/install)
@@ -21,20 +28,10 @@ Environment config files and list of standard software and tooling for every day
 - helm
 - aws cli
 - [direnv](https://direnv.net/)
+- stow
 
-## Nvim environment
+## Set up dotfiles
 
-- gopls
-- pyright
-- prettier
-- gofumpt
-- isort
-- black
-- flake8
-- stylua
-
-## TODO
-
-- HTML
-- TS/JS
-- CSS
+```
+./install.sh
+```

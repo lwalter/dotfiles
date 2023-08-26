@@ -90,11 +90,21 @@ let g:ale_linter_aliases = {'typescriptreact': 'typescript'}
 
 "let g:ale_python_auto_pipenv = 1
 "let g:ale_python_pylint_options = '--load-plugins pylint_django'
+"let g:ale_disable_lsp = 1
+"let g:ale_python_pyright_executable = '/home/lucasw/.nvm/versions/node/v18.15.0/bin/pyright'
+"let b:ale_python_pyright_config = {
+"\   'python': {
+"\       'venvPath': '/home/lucasw/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv',
+"\       'pythonPath': '/home/lucasw/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv/bin/python'
+"\   },
+"\}
 let g:ale_python_isort_options = '--profile black -l 80'
 let g:ale_python_black_options = '--line-length 80'
 let g:ale_python_black_auto_pipenv = 0
 let g:ale_python_black_change_directory = 0
 let g:ale_python_flake8_auto_pipenv = 0
+let g:ale_python_black_executable=$HOME.'/_dev/python-tools/3.8/.venv/bin/black'
+let g:ale_python_flake8_executable = $HOME.'/_dev/python-tools/3.8/.venv/bin/flake8'
 let g:ale_python_mypy_auto_pipenv = 1
 let g:ale_fix_on_save = 1
 

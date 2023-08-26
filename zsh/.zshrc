@@ -13,6 +13,8 @@ bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 bindkey '^H' backward-kill-word
 
+alias vim='nvim'
+
 # Set GOPATH
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
@@ -21,6 +23,8 @@ export PATH=$PATH:~/.local/bin
 HISTSIZE=100000
 SAVEHIST=100000
 HISTFILE=~/.zsh_history
+
+export PATH=$PATH:~/.tfenv/bin
 
 # Use modern completion system
 autoload -Uz compinit
@@ -56,3 +60,8 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export PATH="$HOME/.poetry/bin:$PATH"
+
+# opam configuration
+[[ ! -r /home/lucasw/.opam/opam-init/init.zsh ]] || source /home/lucasw/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null

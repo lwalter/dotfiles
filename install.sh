@@ -1,56 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-sudo apt-get install zsh i3 feh lxappearance i3blocks cmake build-essential python-dev python3-dev tmux curl
+set -e
+set -u
+
+sudo apt-get install zsh i3 i3blocks feh tmux curl stow
 
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
 chmod u+x nvim.appimage
 sudo mv nvim.appimage ~/.local/bin/nvim
 
-# install go
-curl -LO https://go.dev/dl/go1.20.6.linux-amd64.tar.gz --output go1.20.6.linux-amd64.tar.gz
-rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.20.6.linux-amd64.tar.gz
-rm go1.20.6.linux-amd64.tar.gz
-
-# install nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-
-
-dir=~/dotfiles                    # dotfiles directory
-olddir=~/dotfiles_old             # old dotfiles backup directory
-files=".tmux.conf .vimrc .zshrc .config/i3/config .config/i3/i3blocks.conf wallpaper.jpg"
-
-echo "Creating $olddir for backup of any existing dotfiles in ~"
-mkdir -p $olddir
-echo "...done"
-
-echo "Changing to the $dir directory"
-cd $dir
-echo "...done"
-
-for file in $files; do
-    echo "Moving any existing dotfiles from ~ to $olddir"
-    mv ~/$file ~/dotfiles_old/
-    echo "Creating symlink to $file in home directory."
-    ln -sf $dir/$file ~/$file
+packages=(
+    "zsh"
+    "nvim"
+    "i3"
+    "tmux"
+    "git"
+    "desktop"
+)
+for package in "${packages[@]}"; do
+    stow "$package"
 done
-
-source ~/.zshrc
-nvm install node
-
-# install docker
-sudo apt-get update
-sudo apt-get install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
