@@ -46,6 +46,7 @@ require("lazy").setup({
     "hrsh7th/cmp-nvim-lsp",                             -- LSP source for nvim-cmp
     "saadparwaiz1/cmp_luasnip",                         -- Snippets source for nvim-cmp
     "L3MON4D3/LuaSnip",                                 -- Snippets plugin for nvim-cmp
+    "folke/trouble.nvim",
     { "windwp/nvim-autopairs", event = "InsertEnter" }, -- Pair parens
     "mhartington/formatter.nvim",                       -- Autoformatter
     "github/copilot.vim",
@@ -76,6 +77,7 @@ vim.opt.syntax = "ON"
 vim.opt.spelllang = "en_us"
 vim.opt.termguicolors = true
 vim.opt.laststatus = 3 -- Use global status line
+vim.o.updatetime = 250 -- Reduce the amount of time it takes for diagnostics pane to appear
 
 -- Whitespace
 vim.opt.expandtab = true
@@ -88,8 +90,10 @@ local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<C-p>", builtin.git_files, {})
 vim.keymap.set("n", "<leader>ff", builtin.find_files, {})
 vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
+vim.keymap.set("n", "<leader>fw", builtin.grep_string, {})
 vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
+vim.keymap.set("n", "<leader>fd", builtin.diagnostics, {})
 
 -- Configure file tree
 require("nvim-tree").setup()
@@ -171,7 +175,7 @@ treesitter.setup({
         keymaps = {
             init_selection = "<c-space>",
             node_incremental = "<c-l>",
-            scope_incremental = "<c-k>",
+            scope_incremental = false,
             node_decremental = "<c-h>",
         },
     },
@@ -224,6 +228,23 @@ treesitter.setup({
 -- Create on_attach function for auto formatting when attached to an LSP
 local format_grp = vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
 local on_attach = function(_, bufnr)
+    -- Open the diagnostic pane
+    vim.api.nvim_create_autocmd("CursorHold", {
+        group = vim.api.nvim_create_augroup("UserLspDiagnostics", { clear = true }),
+        buffer = bufnr,
+        callback = function()
+            local opts = {
+                focusable = false,
+                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                border = "rounded",
+                source = "always",
+                prefix = " ",
+                scope = "cursor",
+            }
+            vim.diagnostic.open_float(nil, opts)
+        end,
+    })
+
     local filetype = vim.filetype.match({ buf = bufnr })
     if filetype == "go" then
         local params = vim.lsp.util.make_range_params()
@@ -349,6 +370,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end,
 })
 
+-- Setup diagnostics
+vim.diagnostic.config({
+    underline = true,
+    virtual_text = false,
+})
+local trouble = require("trouble")
+trouble.setup()
+vim.keymap.set("n", "<leader>xx", function() trouble.open() end)
+vim.keymap.set("n", "<leader>xw", function() trouble.open("workspace_diagnostics") end)
+vim.keymap.set("n", "<leader>xd", function() trouble.open("document_diagnostics") end)
+vim.keymap.set("n", "<leader>xq", function() trouble.open("quickfix") end)
+vim.keymap.set("n", "<leader>xl", function() trouble.open("loclist") end)
+vim.keymap.set("n", "gR", function() trouble.open("lsp_references") end)
+
 -- Autocompletion
 -- Setup auto complete
 local cmp = require("cmp")
@@ -396,24 +431,6 @@ cmp.setup({
         { name = "luasnip" },
     },
 })
-
--- Reduce the amount of time it takes for diagnostics pane to appear
-vim.o.updatetime = 250
--- Open the diagnostic pane
-vim.api.nvim_create_autocmd("CursorHold", {
-    callback = function()
-        local opts = {
-            focusable = false,
-            close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-            border = "rounded",
-            source = "always",
-            prefix = " ",
-            scope = "cursor",
-        }
-        vim.diagnostic.open_float(nil, opts)
-    end,
-})
-
 
 -- Format on save
 local util = require("formatter.util")
