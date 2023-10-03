@@ -286,7 +286,7 @@ require("mason-lspconfig").setup({
 require("nvim-autopairs").setup({
     disable_filetype = { "TelescopePrompt", "vim" },
     fast_wrap = {
-        map = "<C-w>",
+        map = "<C-e>",
     },
 })
 local lspconfig = require("lspconfig")
