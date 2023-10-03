@@ -169,7 +169,6 @@ treesitter.setup({
     highlight = {
         enable = true,
     },
-    indent = { enable = true },
     incremental_selection = {
         enable = true,
         keymaps = {
@@ -228,23 +227,6 @@ treesitter.setup({
 -- Create on_attach function for auto formatting when attached to an LSP
 local format_grp = vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
 local on_attach = function(_, bufnr)
-    -- Open the diagnostic pane
-    vim.api.nvim_create_autocmd("CursorHold", {
-        group = vim.api.nvim_create_augroup("UserLspDiagnostics", { clear = true }),
-        buffer = bufnr,
-        callback = function()
-            local opts = {
-                focusable = false,
-                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-                border = "rounded",
-                source = "always",
-                prefix = " ",
-                scope = "cursor",
-            }
-            vim.diagnostic.open_float(nil, opts)
-        end,
-    })
-
     -- Always attempt to format on save from LSP
     vim.api.nvim_create_autocmd("BufWritePre", {
         callback = function()
@@ -358,6 +340,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n", "<leader>f", function()
             vim.lsp.buf.format({ async = true, bufnr = opts.buffer, timeout_ms = 3000 })
         end, opts)
+        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
         --vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
         --vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
         --vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
