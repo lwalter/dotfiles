@@ -23,7 +23,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     "navarasu/onedark.nvim",
     "folke/tokyonight.nvim",
-    "folke/neodev.nvim",
+    "folke/lazydev.nvim",
     "nvim-lualine/lualine.nvim",
     "nvim-tree/nvim-web-devicons",
     {
@@ -116,15 +116,16 @@ local disable_all = {
     underdashed = false,
     strikethrough = false,
 }
-require("tokyonight").setup({
-    style = "dark",
-    styles = {
-        keywords = disable_all,
-        variables = disable_all,
-        comments = disable_all,
-    },
-})
-vim.cmd([[colorscheme tokyonight]])
+--require("tokyonight").setup({
+--    style = "dark",
+--    styles = {
+--        keywords = disable_all,
+--        variables = disable_all,
+--        comments = disable_all,
+--    },
+--})
+
+vim.cmd [[colorscheme tokyonight-moon]]
 require("nvim-web-devicons").setup({ default = true })
 
 -- Configure lualine
@@ -164,7 +165,7 @@ treesitter.setup({
         "css",
         --"yaml",
         "toml",
-        "ocaml",
+        --"ocaml",
     },
     highlight = {
         enable = true,
@@ -232,7 +233,7 @@ local on_attach = function(_, bufnr)
         callback = function()
             local filetype = vim.filetype.match({ buf = bufnr })
             if filetype == "go" then
-                local params = vim.lsp.util.make_range_params()
+                local params = vim.lsp.util.make_range_params(0, "utf-8")
                 params.context = { only = { "source.organizeImports" } }
                 local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
                 for cid, res in pairs(result or {}) do
@@ -252,14 +253,16 @@ local on_attach = function(_, bufnr)
 end
 
 -- LSP installation and set upper
-require("neodev").setup()
+require("lazydev").setup({
+    ft = "lua"
+})
 require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
         "pyright",
         "gopls",
         "bashls",
-        "ocamllsp",
+        --"ocamllsp",
         "terraformls",
         "lua_ls",
     },
@@ -271,12 +274,11 @@ require("nvim-autopairs").setup({
         map = "<C-e>",
     },
 })
-local lspconfig = require("lspconfig")
+
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-lspconfig.lua_ls.setup({
+vim.lsp.config("lua_ls", {
     capabilities = capabilities,
-    on_attach = on_attach,
     settings = {
         Lua = {
             workspace = { checkThirdParty = false },
@@ -284,21 +286,25 @@ lspconfig.lua_ls.setup({
         },
     },
 })
-lspconfig.terraformls.setup({
+vim.lsp.enable("lua_ls")
+
+vim.lsp.config("terraformls", {
     capabilities = capabilities,
-    on_attach = on_attach,
 })
-lspconfig.bashls.setup({
+vim.lsp.enable("terraformls")
+
+vim.lsp.config("bashls", {
     capabilities = capabilities,
-    on_attach = on_attach,
 })
-lspconfig.ocamllsp.setup({
+vim.lsp.enable("bashls")
+
+--vim.lsp.config("ocamllsp", {
+--    capabilities = capabilities,
+--})
+--vim.lsp.enable("ocamllsp")
+
+vim.lsp.config("pyright", {
     capabilities = capabilities,
-    on_attach = on_attach,
-})
-lspconfig.pyright.setup({
-    capabilities = capabilities,
-    on_attach = on_attach,
     settings = {
         pyright = {
             autoImportCompletion = true,
@@ -311,7 +317,9 @@ lspconfig.pyright.setup({
         },
     },
 })
-lspconfig.gopls.setup({
+vim.lsp.enable("pyright")
+
+vim.lsp.config("gopls", {
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
@@ -320,6 +328,8 @@ lspconfig.gopls.setup({
         },
     },
 })
+vim.lsp.enable("gopls")
+
 
 -- Setup Lsp keymaps
 -- Only set key maps after attaching to an LSP server
