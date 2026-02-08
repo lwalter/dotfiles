@@ -1,6 +1,7 @@
 [user]
         name = Lucas Walter
         email = me@lnwalter.com
+        signingkey = 2F66315FE5CD3D11947482852858237D58EE53D2
 [core]
         editor = nvim
 [branch]
@@ -9,3 +10,5 @@
         rebase = preserve
 [init]
         defaultBranch = main
+[commit]
+        gpgsign = true

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Curseforge
+Comment=WoW Addons
+Exec=env ELECTRON_OZONE_PLATFORM_HINT= /home/lucas/.local/bin/curseforge-latest-linux.AppImage %U
+Icon=curseforge
+Type=Application

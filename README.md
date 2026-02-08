@@ -1,37 +1,13 @@
 # dotfiles
 
-## Managed
+## Installation
 
-- zsh
-- nvim
-- i3
-- tmux
-- git
+1. Follow [arch installation guide](https://wiki.archlinux.org/title/Installation_guide)
+1. Go through [general recommendations](https://wiki.archlinux.org/title/General_recommendations)
+1. Follow [security steps](https://wiki.archlinux.org/title/Security) and [here](https://theprivacyguide1.github.io/linux_hardening_guide)
 
-## Base installs
+## General maintenance
 
-- iterm2
-- [zsh](https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH#install-and-set-up-zsh-as-default)
-- tmux
-- i3
-- [neovim](https://github.com/neovim/neovim/releases/tag/stable)
-- [mononoki nerd font](https://www.nerdfonts.com/)
-- [go](https://go.dev/doc/install)
-- [pyenv](https://github.com/pyenv/pyenv#install-additional-python-versions)
-- python
-- [nvm](https://github.com/nvm-sh/nvm#install--update-script)
-- node and npm
-- docker
-- [tfenv](https://github.com/tfutils/tfenv)
-- terraform
-- kubectl
-- helm
-- aws cli
-- [direnv](https://direnv.net/)
-- stow
-
-## Set up dotfiles
-
-```
-./install.sh
-```
+1. Check logs in `/var/logs` and verify systemd units `$ systemctl --failed`, `journalctl -xe`
+1. [See docs](https://wiki.archlinux.org/title/System_maintenance)
+1. Remove orphaned packages `pacman -Rns $(pacman -Qtdq)`

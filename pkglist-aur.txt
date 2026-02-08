@@ -1,0 +1,12 @@
+ckb-next-git
+faugus-launcher
+google-chrome
+informant
+ptt-fix
+tfenv
+wago-app-bin
+waybar-module-pacman-updates-git
+wlogout
+wowup-cf-bin
+yay
+yay-debug

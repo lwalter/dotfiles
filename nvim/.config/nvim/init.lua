@@ -1,8 +1,3 @@
--- Setup Nerd Fonts
--- https://www.nerdfonts.com/
--- iterm2->Settings->Profiles->Text->Font
--- Mononoki Nerd Font Mono
--- Disable netrw
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 vim.g.mapleader = ","

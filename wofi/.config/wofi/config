@@ -1,0 +1,9 @@
+mode=drun
+allow_images=true
+prompt=start typing, esc to quit
+height=60%
+width=30%
+
+
+# If you use blur but don't need those corners
+layerrule = ignorealpha 0, wofi/rofi # make sure to set background:none

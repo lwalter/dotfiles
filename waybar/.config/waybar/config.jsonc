@@ -1,0 +1,115 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top", // Waybar at top layer
+    "position": "top", // Waybar position (top|bottom|left|right)
+    //"height": 30, // Waybar height (to be removed for auto height)
+    // "width": 1280, // Waybar width
+    "spacing": 2, // Gaps between modules (4px)
+    "margin-bottom": -10,
+    // Choose the order of the modules
+    "modules-left": [
+        "hyprland/workspaces",
+        "cpu",
+        "memory",
+        "custom/backup",
+        "custom/mntbackup"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "hyprland/submap",
+        "custom/updates",
+        "pulseaudio",
+        "network",
+        "clock",
+        "custom/power"
+    ],
+    // Modules configuration
+    "hyprland/workspaces": {
+        "format": "{name}: {icon}",
+        "format-icons": {
+          "active": "",
+          "default": ""
+        }
+    },
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 50,
+        "rewrite": {
+            "(.*)Firefox": " Firefox",
+            "Alacritty": " Terminal",
+            "(.*)Discord": "  Discord",
+            "Battle.net": " Battle.net",
+            "World of Warcraft": " WoW"
+        }
+    },
+    "hyprland/submap": {
+        "format": "<span>{}</span>"
+    },
+    "custom/updates": {
+        "format": "{} {icon}",
+        "return-type": "json",
+        "format-icons": {
+            "has-updates": "󱍷",
+            "updated": "󰂪"
+        },
+        "tooltip": true,
+        "exec-if": "which waybar-module-pacman-updates",
+        "exec": "waybar-module-pacman-updates --interval-seconds 5 --network-interval-seconds 300"
+    },
+    "clock": {
+        "timezone": "America/Los_Angeles",
+        "tooltip": false,
+        "format": "{:%I:%M:%S - %A, %d}",
+        "interval": 1
+    },
+    "cpu": {
+        "format": " {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
+        "tooltip": true,
+        "tooltip-format": "CPU",
+        "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+        "on-click": "alacritty -e btop",
+        "interval": 1
+    },
+    "custom/backup": {
+        "interval": 300,
+        "return-type": "json",
+        "format": " {}",
+        "exec": "~/.config/waybar/btrfs-disk-util.sh /",
+        "on-click": "alacritty -e sh -c 'btrfs filesystem usage /; echo; echo \"Press enter to close...\"; read'"
+    },
+    "custom/mntbackup": {
+        "interval": 300,
+        "return-type": "json",
+        "format": " {}",
+        "exec": "~/.config/waybar/btrfs-disk-util.sh /mnt/backup",
+        "on-click": "alacritty -e sh -c 'btrfs filesystem usage /mnt/backup; echo; echo \"Press enter to close...\"; read'"
+    },
+    "memory": {
+        "interval": 30,
+        "format": "  {used:0.1f}G/{total:0.1f}G",
+        "on-click": "alacritty -e btop"
+    },
+    "network": {
+      "format-wifi": "󰤢",
+      "format-ethernet": "󰈀 ",
+      "format-disconnected": "󰤠 ",
+      "interval": 5,
+      "tooltip-format": "{essid} ({signalStrength}%)",
+      "on-click": "alacritty -e impala"
+    },
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "",
+        "format-icons": {
+          "default": ["", "", " "]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/power": {
+        "format" : "⏻ ",
+        "on-click": "nwg-bar",
+        "tooltip": false
+    }
+}

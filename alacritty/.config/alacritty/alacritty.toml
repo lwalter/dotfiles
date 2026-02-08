@@ -1,0 +1,22 @@
+# Font settings
+[font]
+size = 13.0
+
+[font.normal]
+family = "CaskaydiaMonoNerdFontMono"
+style = "Regular"
+
+[font.bold]
+family = "CaskaydiaMonoNerdFontMono"
+style = "Bold"
+
+[font.italic]
+family = "CaskaydiaMonoNerdFontMono"
+style = "Italic"
+
+[font.bold_italic]
+family = "CaskaydiaMonoNerdFontMono"
+style = "Bold Italic"
+
+[general]
+import = [ "./tokyonight_storm.toml" ]

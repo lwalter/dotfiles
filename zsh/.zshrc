@@ -1,19 +1,19 @@
 # Set up the prompt
 autoload -Uz promptinit
 promptinit
-PROMPT='[%(?.%F{green}√.%F{red}?)%f %n@%m %~]$ '
+PROMPT='[%(?.%F{green}√.%F{red}?)%f %m %~]$ '
 
 setopt histignorealldups sharehistory
 
 export TERM=xterm-256color
 
-# Use emacs keybindings even if our EDITOR is set to vi
 bindkey -e
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 bindkey '^H' backward-kill-word
 
 alias vim='nvim'
+export SUDO_EDITOR=vim
 
 # Set GOPATH
 export PATH=$PATH:/usr/local/go/bin
@@ -61,7 +61,19 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export PATH="$HOME/.poetry/bin:$PATH"
+if ! nvm ls node >/dev/null 2>&1; then
+    nvm install node
+else
+    nvm use node --silent
+fi
+
+if ! command -v prettier >/dev/null 2>&1; then
+    # I always want prettier in my path
+    npm install -g prettier
+fi
 
 # opam configuration
 [[ ! -r /home/lucasw/.opam/opam-init/init.zsh ]] || source /home/lucasw/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+eval "$(fzf --zsh)"
+eval "$(uv generate-shell-completion bash)"

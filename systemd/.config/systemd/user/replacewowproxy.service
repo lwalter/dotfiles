@@ -1,0 +1,13 @@
+[Unit]
+Description=Replace WowVoiceProxy.exe file
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/bin/runreplace.sh
+User=lucas
+Group=lucas
+
+[Install]
+WantedBy=default.target
+

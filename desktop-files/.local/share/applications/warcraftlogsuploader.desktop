@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Warcraft Logs Uploader
+Comment=Upload logs
+Exec=/home/lucas/.local/bin/warcraftlogs-v8.19.39.AppImage %U
+Type=Application
