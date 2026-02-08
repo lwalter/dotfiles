@@ -80,7 +80,6 @@ function stowApplicationConfigs() {
     sudo stow -R -v -t /usr/local/bin scripts
     sudo stow -R -v -t /usr/share/libalpm/hooks/ pacman-hooks
     sudo stow -R -v -t /etc etc
-    sudo stow -R -v -t /usr usr
 }
 
 function setSystemdUnits() {
