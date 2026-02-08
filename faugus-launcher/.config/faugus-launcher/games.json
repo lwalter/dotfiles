@@ -1,0 +1,27 @@
+[
+    {
+        "gameid": "battlenet",
+        "title": "Battle.net",
+        "path": "/home/lucas/Faugus/battlenet/drive_c/Program Files (x86)/Battle.net/Battle.net.exe",
+        "prefix": "/home/lucas/Faugus/battlenet",
+        "launch_arguments": "WINE_SIMULATE_WRITECOPY=1",
+        "game_arguments": "",
+        "mangohud": "",
+        "gamemode": "",
+        "disable_hidraw": "",
+        "protonfix": "",
+        "runner": "Proton-GE Latest",
+        "addapp_checkbox": "",
+        "addapp": "",
+        "addapp_bat": "/home/lucas/Faugus/battlenet/drive_c/Program Files (x86)/Battle.net/faugus-battlenet.bat",
+        "banner": "/usr/share/faugus-launcher/faugus-banner.png",
+        "lossless_enabled": false,
+        "lossless_multiplier": 1,
+        "lossless_flow": 100,
+        "lossless_performance": false,
+        "lossless_hdr": false,
+        "playtime": 416502,
+        "hidden": false,
+        "prevent_sleep": false
+    }
+]
