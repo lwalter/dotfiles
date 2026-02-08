@@ -73,6 +73,8 @@ rebuild-detector
 resvg
 sassc
 sddm
+shellcheck
+shfmt
 snap-pac
 snapper
 steam

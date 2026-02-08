@@ -17,12 +17,12 @@ function installPackages() {
     if [ ! -d "/usr/local/go" ] || [ "$(cat /usr/local/go/VERSION 2>/dev/null)" != "$GO_LATEST" ]; then
         ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
         curl -LO "https://go.dev/dl/${GO_LATEST}.linux-${ARCH}.tar.gz"
-        sudo rm -rf /usr/local/go 
+        sudo rm -rf /usr/local/go
         sudo tar -C /usr/local -xzf "${GO_LATEST}.linux-${ARCH}.tar.gz"
         rm "${GO_LATEST}.linux-${ARCH}.tar.gz"
     fi
 
-    if ! $(command -v uv >/dev/null 2>&1); then
+    if ! command -v uv >/dev/null 2>&1; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
     fi
 
@@ -33,7 +33,6 @@ function installPackages() {
     curl -Lo ~/.local/bin/warcraftlogs-v8.19.70.AppImage -z ~/.local/bin/warcraftlogs-v8.19.70.AppImage https://github.com/RPGLogs/Uploaders-warcraftlogs/releases/download/v8.19.70/warcraftlogs-v8.19.70.AppImage
     chmod +x ~/.local/bin/warcraftlogs-v8.19.70.AppImage
 }
-
 
 function downloadThemeConfigFiles() {
     # alacritty, btop, tmux, dunst, yazi themes
@@ -50,38 +49,38 @@ function downloadThemeConfigFiles() {
 }
 
 function stowApplicationConfigs() {
-  dotfiles=(
-      "git"
-      "zsh"
-      "tmux"
-      "nvim"
-      "dunst"
-      "alacritty"
-      "btop"
-      "hypr"
-      "gtk-3.0"
-      "gtk-4.0"
-      "wofi"
-      "waybar"
-      "yazi"
-      "ptt-fix"
-      "electron-flags"
-      "udiskie"
-      "nwg-bar"
-      "qt5ct"
-      "qt6ct"
-      "systemd"
-      "desktop-files"
-  )
+    dotfiles=(
+        "git"
+        "zsh"
+        "tmux"
+        "nvim"
+        "dunst"
+        "alacritty"
+        "btop"
+        "hypr"
+        "gtk-3.0"
+        "gtk-4.0"
+        "wofi"
+        "waybar"
+        "yazi"
+        "ptt-fix"
+        "electron-flags"
+        "udiskie"
+        "nwg-bar"
+        "qt5ct"
+        "qt6ct"
+        "systemd"
+        "desktop-files"
+    )
 
-  for application in "${dotfiles[@]}"; do
-      stow -R "$application"
-  done
-  
-  sudo stow -R -v -t /usr/local/bin scripts
-  sudo stow -R -v -t /usr/share/libalpm/hooks/ pacman-hooks
-  sudo stow -R -v -t /etc etc
-  sudo stow -R -v -t /usr usr
+    for application in "${dotfiles[@]}"; do
+        stow -R "$application"
+    done
+
+    sudo stow -R -v -t /usr/local/bin scripts
+    sudo stow -R -v -t /usr/share/libalpm/hooks/ pacman-hooks
+    sudo stow -R -v -t /etc etc
+    sudo stow -R -v -t /usr usr
 }
 
 function setSystemdUnits() {
@@ -100,7 +99,7 @@ function setSystemdUnits() {
 
 function installThemesAndFonts() {
     if [ ! -d "$HOME/Tokyonight-GTK-Theme" ]; then
-        git clone https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme $HOME/Tokyonight-GTK-Theme
+        git clone https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme "$HOME/Tokyonight-GTK-Theme"
     else
         cd "$HOME/Tokyonight-GTK-Theme" && git pull && cd ..
     fi
@@ -123,12 +122,11 @@ function installThemesAndFonts() {
     fi
 }
 
-
 function main() {
     if [[ $EUID -eq 0 ]]; then
-       echo "Error: Please do not run this script as root/sudo directly."
-       echo "It will prompt for your password when needed."
-       exit 1
+        echo "Error: Please do not run this script as root/sudo directly."
+        echo "It will prompt for your password when needed."
+        exit 1
     fi
 
     installPackages
