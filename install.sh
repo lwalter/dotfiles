@@ -4,32 +4,36 @@ set -e
 set -u
 
 function installPackages() {
-    cat pkglist.txt | xargs pacman -S --needed
-    cat pkglist-aur.txt | xargs yay -S --needed
+    grep -v '^#' pkglist.txt | xargs -r sudo pacman -S --needed --noconfirm
+    grep -v '^#' pkglist-aur.txt | xargs -r yay -S --needed --noconfirm
 
     sudo groupadd -f docker
-    if ! groups "$USER" | grep -q "\bdocker\b"; then
-        sudo usermod -aG docker "$USER"
-    fi
+    sudo usermod -aG docker "$USER"
 
-    grep -q "informant" /etc/group || sudo groupadd informant
-    id -nG "$USER" | grep -qw "informant" || sudo usermod -aG informant "$USER"
+    sudo groupadd -f informant
+    sudo usermod -aG informant "$USER"
 
     GO_LATEST=$(curl -s 'https://go.dev/VERSION?m=text' | head -n 1)
-    ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
-    curl -LO "https://go.dev/dl/${GO_LATEST}.linux-${ARCH}.tar.gz"
-    sudo rm -rf /usr/local/go 
-    sudo tar -C /usr/local -xzf "${GO_LATEST}.linux-${ARCH}.tar.gz"
-    rm "${GO_LATEST}.linux-${ARCH}.tar.gz"
+    if [ ! -d "/usr/local/go" ] || [ "$(cat /usr/local/go/VERSION 2>/dev/null)" != "$GO_LATEST" ]; then
+        ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+        curl -LO "https://go.dev/dl/${GO_LATEST}.linux-${ARCH}.tar.gz"
+        sudo rm -rf /usr/local/go 
+        sudo tar -C /usr/local -xzf "${GO_LATEST}.linux-${ARCH}.tar.gz"
+        rm "${GO_LATEST}.linux-${ARCH}.tar.gz"
+    fi
 
-    curl -LsSf https://astral.sh/uv/install.sh | sh
+    if ! $(command -v uv >/dev/null 2>&1); then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    fi
 
-    curl -Lo ~/.local/bin/curseforge-latest-linux.AppImage https://curseforge.overwolf.com/downloads/curseforge-latest-linux.AppImage
+    mkdir -p ~/.local/bin
+    curl -Lo ~/.local/bin/curseforge-latest-linux.AppImage -z ~/.local/bin/curseforge-latest-linux.AppImage https://curseforge.overwolf.com/downloads/curseforge-latest-linux.AppImage
     chmod +x ~/.local/bin/curseforge-latest-linux.AppImage
 
-    curl -Lo ~/.local/bin/warcraftlogs-v8.19.70.AppImage https://github.com/RPGLogs/Uploaders-warcraftlogs/releases/download/v8.19.70/warcraftlogs-v8.19.70.AppImage
+    curl -Lo ~/.local/bin/warcraftlogs-v8.19.70.AppImage -z ~/.local/bin/warcraftlogs-v8.19.70.AppImage https://github.com/RPGLogs/Uploaders-warcraftlogs/releases/download/v8.19.70/warcraftlogs-v8.19.70.AppImage
     chmod +x ~/.local/bin/warcraftlogs-v8.19.70.AppImage
 }
+
 
 function downloadThemeConfigFiles() {
     # alacritty, btop, tmux, dunst, yazi themes
@@ -71,58 +75,67 @@ function stowApplicationConfigs() {
   )
 
   for application in "${dotfiles[@]}"; do
-      stow "$application"
+      stow -R "$application"
   done
   
-  sudo stow -v -t /usr/local/bin scripts
-  sudo stow -v -t /usr/share/libalpm/hooks/ pacman-hooks
-  sudo stow -v -t /etc etc
+  sudo stow -R -v -t /usr/local/bin scripts
+  sudo stow -R -v -t /usr/share/libalpm/hooks/ pacman-hooks
+  sudo stow -R -v -t /etc etc
+  sudo stow -R -v -t /usr usr
 }
 
 function setSystemdUnits() {
-    sudo systemctl enable --now iwd.service
-    sudo systemctl enable --now ufw
-    sudo systemctl enable --now snapper-timeline.timer
-    sudo systemctl enable --now snapper-cleanup.timer
-    sudo systemctl enable --now snapper-cleanup.service
-    sudo systemctl enable --now btrbk.timer
-    sudo systemctl enable --now apcupsd.service
-    sudo systemctl enable --now docker.socket
-    sudo systemctl enable --now docker.service
+    units=(iwd.service ufw snapper-timeline.timer snapper-cleanup.timer snapper-cleanup.service btrbk.timer apcupsd.service docker.socket docker.service)
+    for unit in "${units[@]}"; do
+        sudo systemctl enable --now "$unit"
+    done
 
-    # For now, stop this daemon...
     sudo systemctl disable --now ckb-next-daemon.service
 
-    systemctl --user enable --now hyprpolkitagent.service
-    systemctl --user enable --now ptt-fix.service
-    systemctl --user enable --now replacewowproxy.service
+    user_units=(hyprpolkitagent.service ptt-fix.service replacewowproxy.service)
+    for unit in "${user_units[@]}"; do
+        systemctl --user enable --now "$unit"
+    done
 }
 
-
 function installThemesAndFonts() {
-    # tokyonight GTK 3/4
-    git clone https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme
-    ./themes/install.sh -l --tweaks storm
-    # tokyonight icons
-    curl -Lo /tmp/TokyoNight-SE.tar.bz2 https://github.com/ljmill/tokyo-night-icons/releases/download/v0.2.0/TokyoNight-SE.tar.bz2
-    tar -xvjf /tmp/TokyoNight-SE.tar.bz2 -C ~/.icons/
+    if [ ! -d "$HOME/Tokyonight-GTK-Theme" ]; then
+        git clone https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme $HOME/Tokyonight-GTK-Theme
+    else
+        cd "$HOME/Tokyonight-GTK-Theme" && git pull && cd ..
+    fi
+    ./Tokyonight-GTK-Theme/install.sh -l --tweaks storm
 
-    # Fonts
-    curl -Lo /tmp/CaskaydiaMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/CaskaydiaMono.zip
-    unzip /tmp/CaskaydiaMono.zip -d ~/.local/share/fonts
-    sudo fc-cache -fv
+    if [ ! -d "$HOME/.icons/TokyoNight-SE" ]; then
+        curl -Lo /tmp/TokyoNight-SE.tar.bz2 https://github.com/ljmill/tokyo-night-icons/releases/download/v0.2.0/TokyoNight-SE.tar.bz2
+        mkdir -p ~/.icons
+        tar -xvjf /tmp/TokyoNight-SE.tar.bz2 -C ~/.icons/
+    fi
 
-    # sddm theme
-    # https://github.com/siddrs/tokyo-night-sddm ???
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
-    # TODO editing /etc/sddm.conf and fonts
+    if [ ! -d "$HOME/.local/share/fonts/CaskaydiaMono" ]; then
+        curl -Lo /tmp/CaskaydiaMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/CaskaydiaMono.zip
+        unzip -o /tmp/CaskaydiaMono.zip -d ~/.local/share/fonts/CaskaydiaMono
+        fc-cache -f
+    fi
+
+    if [ ! -d "/usr/share/sddm/themes/astronaut" ]; then
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
+    fi
 }
 
 
 function main() {
+    if [[ $EUID -eq 0 ]]; then
+       echo "Error: Please do not run this script as root/sudo directly."
+       echo "It will prompt for your password when needed."
+       exit 1
+    fi
+
     installPackages
     downloadThemeConfigFiles
+    installThemesAndFonts
     stowApplicationConfigs
     setSystemdUnits
-    installThemesAndFonts
 }
+
+main "@"
