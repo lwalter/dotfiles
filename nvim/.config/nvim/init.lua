@@ -273,6 +273,7 @@ require("nvim-autopairs").setup({
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 vim.lsp.config("lua_ls", {
+    on_attach = on_attach,
     capabilities = capabilities,
     settings = {
         Lua = {
@@ -289,6 +290,7 @@ vim.lsp.config("terraformls", {
 vim.lsp.enable("terraformls")
 
 vim.lsp.config("bashls", {
+    on_attach = on_attach,
     capabilities = capabilities,
 })
 vim.lsp.enable("bashls")
