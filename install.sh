@@ -90,7 +90,7 @@ function setSystemdUnits() {
 
     sudo systemctl disable --now ckb-next-daemon.service
 
-    user_units=(hyprpolkitagent.service ptt-fix.service replacewowproxy.service)
+    user_units=(replacewowproxy.service)
     for unit in "${user_units[@]}"; do
         systemctl --user enable --now "$unit"
     done

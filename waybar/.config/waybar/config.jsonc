@@ -93,7 +93,7 @@
     },
     "network": {
       "format-wifi": "󰤢",
-      "format-ethernet": "󰈀 ",
+      "format-ethernet": "󰈀",
       "format-disconnected": "󰤠 ",
       "interval": 5,
       "tooltip-format": "{essid} ({signalStrength}%)",

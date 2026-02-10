@@ -38,4 +38,4 @@ retry 10s
 # listen to. This directive may be specified more than once. All
 # listed devices will be listened to if they are capable of sending
 # the requested key.
-device /dev/input/by-id/*
+device /dev/input/by-id/usb-PCsensor_FootSwitch-event-kbd
