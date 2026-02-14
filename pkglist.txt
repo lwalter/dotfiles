@@ -48,6 +48,7 @@ linux-firmware
 linux-headers
 man-db
 mpv
+ncdu
 neovim
 noto-fonts-cjk
 noto-fonts-emoji
@@ -95,6 +96,7 @@ wireless-regdb
 wireplumber
 woff2-font-awesome
 wofi
+xclip
 xdg-desktop-portal-hyprland
 xorg-xhost
 yazi
