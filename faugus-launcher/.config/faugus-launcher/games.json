@@ -4,7 +4,7 @@
         "title": "Battle.net",
         "path": "/home/lucas/Faugus/battlenet/drive_c/Program Files (x86)/Battle.net/Battle.net.exe",
         "prefix": "/home/lucas/Faugus/battlenet",
-        "launch_arguments": "WINE_SIMULATE_WRITECOPY=1",
+        "launch_arguments": "WINE_SIMULATE_WRITECOPY=1 PROTON_ENABLE_WAYLAND=0",
         "game_arguments": "",
         "mangohud": "",
         "gamemode": "",
