@@ -23,6 +23,7 @@
 #memory,
 #custom-power,
 #custom-updates,
+#custom-systemd,
 #pulseaudio,
 #network,
 #custom-backup,
@@ -53,6 +54,7 @@
 #memory:hover,
 #custom-power:hover,
 #custom-updates:hover,
+#custom-systemd:hover,
 #pulseaudio:hover,
 #network:hover,
 #custom-backup:hover,
@@ -102,6 +104,12 @@
 
 #cpu {
   color: #c6d0f5;
+}
+
+#custom-systemd.failed {
+    color: #f38ba8;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 #custom-backup,

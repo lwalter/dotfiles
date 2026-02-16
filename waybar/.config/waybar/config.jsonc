@@ -19,6 +19,7 @@
     ],
     "modules-right": [
         "hyprland/submap",
+        "custom/systemd",
         "custom/updates",
         "pulseaudio",
         "network",
@@ -57,6 +58,14 @@
         "tooltip": true,
         "exec-if": "which waybar-module-pacman-updates",
         "exec": "waybar-module-pacman-updates --interval-seconds 5 --network-interval-seconds 300"
+    },
+    "custom/systemd": {
+        "format": "{}",
+        "return-type": "json",
+        "interval": 60,
+        "exec": "~/.config/waybar/systemd-status.sh",
+        "on-click": "alacritty -e journalctl -p 3 -xb",
+        "escape": true
     },
     "clock": {
         "timezone": "America/Los_Angeles",
