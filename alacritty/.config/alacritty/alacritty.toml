@@ -20,3 +20,7 @@ style = "Bold Italic"
 
 [general]
 import = [ "./tokyonight_storm.toml" ]
+
+[[keyboard.bindings]]
+key = "F13"
+action = "None"

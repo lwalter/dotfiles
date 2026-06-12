@@ -1,0 +1,9 @@
+[Unit]
+Description=Activate graphical-session.target for Hyprland
+Wants=graphical-session-pre.target graphical-session.target
+After=graphical-session-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/true
+RemainAfterExit=yes

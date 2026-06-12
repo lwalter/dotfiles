@@ -1,12 +1,15 @@
 ckb-next-git
+downgrade
 faugus-launcher
 google-chrome
 informant
 ptt-fix
+shellcheck-bin
 tfenv
 wago-app-bin
+wago-app-bin-debug
 waybar-module-pacman-updates-git
+waybar-module-pacman-updates-git-debug
 wlogout
 wowup-cf-bin
 yay
-yay-debug

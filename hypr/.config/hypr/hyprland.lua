@@ -92,6 +92,8 @@ hl.window_rule({
 
 -- Auto start
 hl.on("hyprland.start", function()
+    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+    hl.exec_cmd("systemctl --user start hyprland-session-activate.service")
     hl.exec_cmd("xrandr --output DP-2 --primary")
     hl.exec_cmd("hyprctl dispatch workspace 1")
     hl.exec_cmd("dunst")

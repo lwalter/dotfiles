@@ -34,6 +34,7 @@ hyprlock
 hyprpaper
 hyprpolkitagent
 hyprshot
+hyprshutdown
 impala
 iwd
 jq
@@ -65,6 +66,7 @@ pipewire-alsa
 pipewire-jack
 pipewire-pulse
 plasma-desktop
+python-cairo
 qt5-wayland
 qt5ct
 qt6-virtualkeyboard
@@ -74,7 +76,6 @@ rebuild-detector
 resvg
 sassc
 sddm
-shellcheck
 shfmt
 snap-pac
 snapper
@@ -98,6 +99,7 @@ woff2-font-awesome
 wofi
 xclip
 xdg-desktop-portal-hyprland
+xorg-xev
 xorg-xhost
 yazi
 zip

@@ -7,7 +7,11 @@ all_failed=$(printf "%s\n%s" "$failed_system" "$failed_user" | sed '/^$/d')
 if [ -n "$all_failed" ]; then
     count=$(echo "$all_failed" | wc -l)
     tooltip="Failed Units:\n$all_failed"
-    echo "{\"text\": \"$count ⚠\", \"tooltip\": \"$tooltip\", \"class\": \"failed\"}"
+
+    # Replace all literal newlines with safe '\n' strings
+    tooltip_escaped=${tooltip//$'\n'/\\n}
+
+    echo "{\"text\": \"$count ⚠\", \"tooltip\": \"$tooltip_escaped\", \"class\": \"failed\"}"
 else
     echo "{\"text\": \"0 󰸞\", \"tooltip\": \"All systems nominal\", \"class\": \"healthy\"}"
 fi

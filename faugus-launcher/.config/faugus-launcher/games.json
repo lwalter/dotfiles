@@ -14,15 +14,19 @@
         "addapp_checkbox": "",
         "addapp": "",
         "addapp_bat": "/home/lucas/Faugus/battlenet/drive_c/Program Files (x86)/Battle.net/faugus-battlenet.bat",
+        "addapp_delay": "",
+        "addapp_first": "",
         "banner": "/usr/share/faugus-launcher/faugus-banner.png",
         "lossless_enabled": false,
         "lossless_multiplier": 1,
         "lossless_flow": 100,
         "lossless_performance": false,
         "lossless_hdr": false,
-        "playtime": 416502,
         "lossless_present": "",
+        "playtime": 1190841,
         "hidden": false,
-        "prevent_sleep": false
+        "prevent_sleep": false,
+        "category": false,
+        "icon": "/home/lucas/.config/faugus-launcher/icons/battlenet.ico"
     }
 ]
