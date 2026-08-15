@@ -29,6 +29,10 @@ hl.workspace_rule({
     monitor = "DP-1"
 })
 hl.workspace_rule({
+    workspace = "8",
+    monitor = "DP-1"
+})
+hl.workspace_rule({
     workspace = "9",
     monitor = "DP-1"
 })
@@ -37,9 +41,16 @@ hl.workspace_rule({
 hl.window_rule({
     name = "force-workspace-9",
     match = {
-        class = "^(steam_app_.*|battle.net.exe|faugus-launcher)$"
+        class = "^(steam_app_.*|battle.net.exe)$"
     },
     workspace = "9 silent"
+})
+hl.window_rule({
+    name = "force-workspace-8",
+    match = {
+        title = "^(Faugus)$"
+    },
+    workspace = "8 silent"
 })
 hl.window_rule({
     name = "force-workspace-2",
