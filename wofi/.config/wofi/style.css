@@ -1,8 +1,39 @@
 #window {
     border-radius: 15px;
-    background-color: rgba(36, 40, 59, 0.99);
+    background-color: rgba(36, 40, 59, 0.99);   /* matches hyprland's #1a1a1a bg */
+    border: 2px solid #33ccff;                  /* matches hyprland's active border */
+    font-family: "CaskaydiaMonoNerdFont";
 }
-#scroll{
-    border: 2px solid grey;
-    border-radius: 15px;
+
+#input {
+    margin: 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+#scroll {
+    border: none;
+    margin: 4px 8px;
+}
+
+#entry {
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+#entry:selected {
+    background-color: rgba(51, 204, 255, 0.15);
+    border-radius: 8px;
+}
+
+#text {
+    color: #e0e0e0;
+}
+
+#text:selected {
+    color: #ffffff;
 }
