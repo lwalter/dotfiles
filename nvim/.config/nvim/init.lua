@@ -395,24 +395,11 @@ require("formatter").setup({
         python = {
             function()
                 return {
-                    exe = "isort",
+                    exe = "ruff",
                     args = {
-                        "-q",
-                        "--profile black",
-                        "-",
-                    },
-                    stdin = true,
-                }
-            end,
-            function()
-                return {
-                    exe = "black",
-                    args = {
-                        "-q",
-                        "--line-length 80",
+                        "format",
                         "--stdin-filename",
                         util.escape_path(util.get_current_buffer_file_path()),
-                        "--",
                         "-",
                     },
                     stdin = true,
