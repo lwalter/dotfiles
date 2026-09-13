@@ -42,7 +42,7 @@ require("lazy").setup({
     "saadparwaiz1/cmp_luasnip",                         -- Snippets source for nvim-cmp
     "L3MON4D3/LuaSnip",                                 -- Snippets plugin for nvim-cmp
     { "folke/trouble.nvim",    opts = {},            cmd = "Trouble" },
-    { "windwp/nvim-autopairs", event = "InsertEnter" }, -- Pair parens
+    { "echasnovski/mini.pairs", version = "*", event = "InsertEnter" },
     "mhartington/formatter.nvim",                       -- Autoformatter
     "github/copilot.vim",
     "sphamba/smear-cursor.nvim",
@@ -237,12 +237,7 @@ require("mason-lspconfig").setup({
     },
 })
 
-require("nvim-autopairs").setup({
-    disable_filetype = { "TelescopePrompt", "vim" },
-    fast_wrap = {
-        map = "<C-e>",
-    },
-})
+require("mini.pairs").setup()
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
@@ -347,11 +342,6 @@ vim.keymap.set("n", "gR", "<cmd>Trouble lsp toggle focus=false win.position=righ
 -- Autocompletion
 -- Setup auto complete
 local cmp = require("cmp")
-local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-cmp.event:on(
-    'confirm_done',
-    cmp_autopairs.on_confirm_done()
-)
 local luasnip = require("luasnip")
 cmp.setup({
     snippet = {
