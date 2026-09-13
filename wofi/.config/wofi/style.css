@@ -2,7 +2,7 @@
     border-radius: 15px;
     background-color: rgba(36, 40, 59, 0.99);   /* matches hyprland's #1a1a1a bg */
     border: 2px solid #33ccff;                  /* matches hyprland's active border */
-    font-family: "CaskaydiaMonoNerdFont";
+    font-family: "JetBrainsMono";
 }
 
 #input {

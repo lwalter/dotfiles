@@ -116,6 +116,12 @@ function installThemesAndFonts() {
         fc-cache -f
     fi
 
+    if [ ! -d "$HOME/.local/share/fonts/JetBrainsMono" ]; then
+        curl -Lo /tmp/JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.0/JetBrainsMono.zip
+        unzip -o /tmp/JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
+        fc-cache -f
+    fi
+
     if [ ! -d "/usr/share/sddm/themes/astronaut" ]; then
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
     fi

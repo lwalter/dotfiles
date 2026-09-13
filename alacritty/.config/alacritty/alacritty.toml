@@ -3,19 +3,19 @@
 size = 13.0
 
 [font.normal]
-family = "CaskaydiaMonoNerdFontMono"
+family = "JetBrainsMono"
 style = "Regular"
 
 [font.bold]
-family = "CaskaydiaMonoNerdFontMono"
+family = "JetBrainsMono"
 style = "Bold"
 
 [font.italic]
-family = "CaskaydiaMonoNerdFontMono"
+family = "JetBrainsMono"
 style = "Italic"
 
 [font.bold_italic]
-family = "CaskaydiaMonoNerdFontMono"
+family = "JetBrainsMono"
 style = "Bold Italic"
 
 [general]
