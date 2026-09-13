@@ -45,6 +45,7 @@ require("lazy").setup({
     { "windwp/nvim-autopairs", event = "InsertEnter" }, -- Pair parens
     "mhartington/formatter.nvim",                       -- Autoformatter
     "github/copilot.vim",
+    "sphamba/smear-cursor.nvim",
 })
 
 vim.keymap.set("i", "ii", "<Esc>")
@@ -122,6 +123,13 @@ local disable_all = {
 
 vim.cmd [[colorscheme tokyonight-moon]]
 require("nvim-web-devicons").setup({ default = true })
+
+require("smear_cursor").setup({
+    smear_between_buffers = true,
+    smear_between_neighbor_lines = true,
+    scroll_buffer_space = true,
+    smear_insert_mode = true,
+})
 
 -- Configure lualine
 require("lualine").setup({
