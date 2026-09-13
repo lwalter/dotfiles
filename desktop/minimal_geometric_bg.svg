@@ -1,0 +1,51 @@
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="72%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#89b4fa" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#89b4fa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- base -->
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+
+  <!-- thin grid, very faint -->
+  <g stroke="#cdd6f4" stroke-opacity="0.035" stroke-width="1">
+    <line x1="0" y1="270" x2="1920" y2="270"/>
+    <line x1="0" y1="540" x2="1920" y2="540"/>
+    <line x1="0" y1="810" x2="1920" y2="810"/>
+    <line x1="480" y1="0" x2="480" y2="1080"/>
+    <line x1="960" y1="0" x2="960" y2="1080"/>
+    <line x1="1440" y1="0" x2="1440" y2="1080"/>
+  </g>
+
+  <!-- single large arc -->
+  <path d="M -100 900 A 1400 1400 0 0 1 2020 500"
+        fill="none" stroke="#89b4fa" stroke-opacity="0.55" stroke-width="1.5"/>
+
+  <!-- concentric quarter-arcs, top right, like a radar/sun motif -->
+  <g fill="none" stroke="#f5c2e7" stroke-opacity="0.35" stroke-width="1">
+    <circle cx="1500" cy="220" r="90"/>
+    <circle cx="1500" cy="220" r="160"/>
+    <circle cx="1500" cy="220" r="230"/>
+  </g>
+
+  <!-- a couple of thin diagonal accent lines -->
+  <g stroke="#a6e3a1" stroke-opacity="0.25" stroke-width="1">
+    <line x1="0" y1="1080" x2="700" y2="380"/>
+    <line x1="60" y1="1080" x2="760" y2="380"/>
+  </g>
+
+  <!-- small hollow geometric marks scattered lightly -->
+  <g fill="none" stroke="#cdd6f4" stroke-opacity="0.4" stroke-width="1">
+    <rect x="220" y="150" width="14" height="14" transform="rotate(20 227 157)"/>
+    <circle cx="1720" cy="850" r="6"/>
+    <circle cx="1680" cy="880" r="3"/>
+    <path d="M 1100 940 l 10 -10 l 10 10 l -10 10 z"/>
+  </g>
+</svg>
