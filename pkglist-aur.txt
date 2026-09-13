@@ -2,7 +2,6 @@ ckb-next-git
 downgrade
 faugus-launcher
 google-chrome
-informant
 ptt-fix
 shellcheck-bin
 tfenv

@@ -36,6 +36,7 @@ hyprpolkitagent
 hyprshot
 hyprshutdown
 impala
+informant
 iwd
 jq
 kvantum
