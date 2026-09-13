@@ -28,8 +28,9 @@ require("lazy").setup({
     },
     {
         'nvim-treesitter/nvim-treesitter',
+        lazy = false,
         dependencies = {
-            'nvim-treesitter/nvim-treesitter-textobjects',
+            { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main' },
         },
         build = ':TSUpdate',
     },
@@ -170,6 +171,10 @@ treesitter.setup({
         "toml",
         --"ocaml",
     },
+    sync_install = false,
+    auto_install = false,
+    ignore_install = {},
+    modules = {},
     highlight = {
         enable = true,
     },
@@ -182,51 +187,38 @@ treesitter.setup({
             node_decremental = "<c-h>",
         },
     },
-    textobjects = {
-        select = {
-            enable = true,
-            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-            keymaps = {
-                -- You can use the capture groups defined in textobjects.scm
-                ["aa"] = "@parameter.outer",
-                ["ia"] = "@parameter.inner",
-                ["af"] = "@function.outer",
-                ["if"] = "@function.inner",
-                ["ac"] = "@class.outer",
-                ["ic"] = "@class.inner",
-            },
-        },
-        move = {
-            enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
-            goto_next_start = {
-                ["]m"] = "@function.outer",
-                ["]]"] = "@class.outer",
-            },
-            goto_next_end = {
-                ["]M"] = "@function.outer",
-                ["]["] = "@class.outer",
-            },
-            goto_previous_start = {
-                ["[m"] = "@function.outer",
-                ["[["] = "@class.outer",
-            },
-            goto_previous_end = {
-                ["[M"] = "@function.outer",
-                ["[]"] = "@class.outer",
-            },
-        },
-        swap = {
-            enable = true,
-            swap_next = {
-                ["<leader>a"] = "@parameter.inner",
-            },
-            swap_previous = {
-                ["<leader>A"] = "@parameter.inner",
-            },
-        },
+})
+
+require("nvim-treesitter-textobjects").setup({
+    select = {
+        lookahead = true,
+    },
+    move = {
+        set_jumps = true,
     },
 })
+
+local to_select = require("nvim-treesitter-textobjects.select")
+vim.keymap.set({ "x", "o" }, "aa", function() to_select.select_textobject("@parameter.outer", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "ia", function() to_select.select_textobject("@parameter.inner", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "af", function() to_select.select_textobject("@function.outer", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "if", function() to_select.select_textobject("@function.inner", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "ac", function() to_select.select_textobject("@class.outer", "textobjects") end)
+vim.keymap.set({ "x", "o" }, "ic", function() to_select.select_textobject("@class.inner", "textobjects") end)
+
+local to_move = require("nvim-treesitter-textobjects.move")
+vim.keymap.set({ "n", "x", "o" }, "]m", function() to_move.goto_next_start("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "]]", function() to_move.goto_next_start("@class.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "]M", function() to_move.goto_next_end("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "][", function() to_move.goto_next_end("@class.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[m", function() to_move.goto_previous_start("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[[", function() to_move.goto_previous_start("@class.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[M", function() to_move.goto_previous_end("@function.outer", "textobjects") end)
+vim.keymap.set({ "n", "x", "o" }, "[]", function() to_move.goto_previous_end("@class.outer", "textobjects") end)
+
+local to_swap = require("nvim-treesitter-textobjects.swap")
+vim.keymap.set("n", "<leader>a", function() to_swap.swap_next("@parameter.inner") end)
+vim.keymap.set("n", "<leader>A", function() to_swap.swap_previous("@parameter.inner") end)
 
 -- Create on_attach function for auto formatting when attached to an LSP
 local format_grp = vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
