@@ -55,7 +55,7 @@ hl.window_rule({
 hl.window_rule({
     name = "force-workspace-2",
     match = {
-        class = "^(discord|CurseForge|WowUpCf|mpv)$"
+        class = "^(discord|curseforge|WowUpCf|mpv)$"
     },
     workspace = "2 silent"
 })
