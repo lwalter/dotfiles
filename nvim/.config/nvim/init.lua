@@ -23,7 +23,7 @@ require("lazy").setup({
     "nvim-tree/nvim-web-devicons",
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.2',
+        tag = 'v0.2.1',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
     {
@@ -42,7 +42,7 @@ require("lazy").setup({
     "hrsh7th/cmp-nvim-lsp",                             -- LSP source for nvim-cmp
     "saadparwaiz1/cmp_luasnip",                         -- Snippets source for nvim-cmp
     "L3MON4D3/LuaSnip",                                 -- Snippets plugin for nvim-cmp
-    "folke/trouble.nvim",
+    { "folke/trouble.nvim",    opts = {},            cmd = "Trouble" },
     { "windwp/nvim-autopairs", event = "InsertEnter" }, -- Pair parens
     "mhartington/formatter.nvim",                       -- Autoformatter
     "github/copilot.vim",
@@ -363,14 +363,12 @@ vim.diagnostic.config({
     underline = true,
     virtual_text = false,
 })
-local trouble = require("trouble")
-trouble.setup()
-vim.keymap.set("n", "<leader>xx", function() trouble.open() end)
-vim.keymap.set("n", "<leader>xw", function() trouble.open("workspace_diagnostics") end)
-vim.keymap.set("n", "<leader>xd", function() trouble.open("document_diagnostics") end)
-vim.keymap.set("n", "<leader>xq", function() trouble.open("quickfix") end)
-vim.keymap.set("n", "<leader>xl", function() trouble.open("loclist") end)
-vim.keymap.set("n", "gR", function() trouble.open("lsp_references") end)
+vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>")
+vim.keymap.set("n", "<leader>xw", "<cmd>Trouble diagnostics toggle<cr>")
+vim.keymap.set("n", "<leader>xd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>")
+vim.keymap.set("n", "<leader>xq", "<cmd>Trouble qflist toggle<cr>")
+vim.keymap.set("n", "<leader>xl", "<cmd>Trouble loclist toggle<cr>")
+vim.keymap.set("n", "gR", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>")
 
 -- Autocompletion
 -- Setup auto complete
