@@ -16,7 +16,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    "navarasu/onedark.nvim",
     "folke/tokyonight.nvim",
     "folke/lazydev.nvim",
     "nvim-lualine/lualine.nvim",
@@ -96,31 +95,6 @@ vim.keymap.set("n", "<leader>fd", builtin.diagnostics, {})
 require("nvim-tree").setup()
 vim.keymap.set("n", "<F6>", ":NvimTreeToggle<CR>")
 
-
--- Configure theming
---require("onedark").setup({
---	code_style = { comments = "none" },
---})
---require("onedark").load()
---local disable_all = {
---    italic = false,
---    bold = false,
---    standout = false,
---    underline = false,
---    undercurl = false,
---    underdouble = false,
---    underdotted = false,
---    underdashed = false,
---    strikethrough = false,
---}
---require("tokyonight").setup({
---    style = "dark",
---    styles = {
---        keywords = disable_all,
---        variables = disable_all,
---        comments = disable_all,
---    },
---})
 
 vim.cmd [[colorscheme tokyonight-moon]]
 require("nvim-web-devicons").setup({ default = true })
