@@ -102,17 +102,17 @@ vim.keymap.set("n", "<F6>", ":NvimTreeToggle<CR>")
 --	code_style = { comments = "none" },
 --})
 --require("onedark").load()
-local disable_all = {
-    italic = false,
-    bold = false,
-    standout = false,
-    underline = false,
-    undercurl = false,
-    underdouble = false,
-    underdotted = false,
-    underdashed = false,
-    strikethrough = false,
-}
+--local disable_all = {
+--    italic = false,
+--    bold = false,
+--    standout = false,
+--    underline = false,
+--    undercurl = false,
+--    underdouble = false,
+--    underdotted = false,
+--    underdashed = false,
+--    strikethrough = false,
+--}
 --require("tokyonight").setup({
 --    style = "dark",
 --    styles = {
@@ -228,7 +228,7 @@ local on_attach = function(_, bufnr)
         callback = function()
             local filetype = vim.filetype.match({ buf = bufnr })
             if filetype == "go" then
-                local params = vim.lsp.util.make_range_params(0, "utf-8")
+                local params = vim.lsp.util.make_range_params(0, "utf-8") --[[@as any]]
                 params.context = { only = { "source.organizeImports" } }
                 local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
                 for cid, res in pairs(result or {}) do
@@ -339,7 +339,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, opts)
         vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, opts)
         vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-        vim.keymap.set("n", "<leader>d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "<leader>d", function() vim.diagnostic.jump({ count = 1, float = true }) end, opts)
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
         vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
