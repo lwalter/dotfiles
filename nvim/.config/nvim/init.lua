@@ -28,22 +28,23 @@ require("lazy").setup({
     {
         'nvim-treesitter/nvim-treesitter',
         lazy = false,
+        branch = 'main',
         dependencies = {
             { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main' },
         },
         build = ':TSUpdate',
     },
-    "nvim-tree/nvim-tree.lua",                          -- Filetree
-    "williamboman/mason.nvim",                          -- Installation of LSPs
+    "nvim-tree/nvim-tree.lua",  -- Filetree
+    "williamboman/mason.nvim",  -- Installation of LSPs
     "williamboman/mason-lspconfig.nvim",
-    "neovim/nvim-lspconfig",                            -- LSP configuration
-    "hrsh7th/nvim-cmp",                                 -- Autocompletion plugin
-    "hrsh7th/cmp-nvim-lsp",                             -- LSP source for nvim-cmp
-    "saadparwaiz1/cmp_luasnip",                         -- Snippets source for nvim-cmp
-    "L3MON4D3/LuaSnip",                                 -- Snippets plugin for nvim-cmp
-    { "folke/trouble.nvim",    opts = {},            cmd = "Trouble" },
+    "neovim/nvim-lspconfig",    -- LSP configuration
+    "hrsh7th/nvim-cmp",         -- Autocompletion plugin
+    "hrsh7th/cmp-nvim-lsp",     -- LSP source for nvim-cmp
+    "saadparwaiz1/cmp_luasnip", -- Snippets source for nvim-cmp
+    "L3MON4D3/LuaSnip",         -- Snippets plugin for nvim-cmp
+    { "folke/trouble.nvim",     opts = {},     cmd = "Trouble" },
     { "echasnovski/mini.pairs", version = "*", event = "InsertEnter" },
-    "mhartington/formatter.nvim",                       -- Autoformatter
+    "mhartington/formatter.nvim", -- Autoformatter
     "github/copilot.vim",
     "sphamba/smear-cursor.nvim",
 })
@@ -122,45 +123,32 @@ require("lualine").setup({
 })
 
 -- Syntax highlighting
-local treesitter = require("nvim-treesitter.configs")
-treesitter.setup({
-    ensure_installed = {
-        "lua",
-        "vim",
-        "python",
-        "go",
-        "css",
-        "dockerfile",
-        "bash",
-        "typescript",
-        "elixir",
-        "json",
-        "rust",
-        "markdown",
-        "terraform",
-        "hcl",
-        "make",
-        "css",
-        --"yaml",
-        "toml",
-        --"ocaml",
-    },
-    sync_install = false,
-    auto_install = false,
-    ignore_install = {},
-    modules = {},
-    highlight = {
-        enable = true,
-    },
-    incremental_selection = {
-        enable = true,
-        keymaps = {
-            init_selection = "<c-space>",
-            node_incremental = "<c-l>",
-            scope_incremental = false,
-            node_decremental = "<c-h>",
-        },
-    },
+local ts_langs = {
+    "lua",
+    "vim",
+    "python",
+    "go",
+    "css",
+    "dockerfile",
+    "bash",
+    "typescript",
+    "elixir",
+    "json",
+    "rust",
+    "terraform",
+    "hcl",
+    "make",
+    "toml",
+    --"yaml",
+}
+
+require("nvim-treesitter").install(ts_langs)
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = ts_langs,
+    callback = function()
+        vim.treesitter.start()
+    end,
 })
 
 require("nvim-treesitter-textobjects").setup({
@@ -201,15 +189,23 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_create_autocmd("BufWritePre", {
         callback = function()
             local filetype = vim.filetype.match({ buf = bufnr })
-            if filetype == "go" then
+            if filetype == "go" or filetype == "python" then
                 local params = vim.lsp.util.make_range_params(0, "utf-8") --[[@as any]]
-                params.context = { only = { "source.organizeImports" } }
+                params.context = { only = { "source.organizeImports" }, diagnostics = {} }
                 local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
                 for cid, res in pairs(result or {}) do
-                    for _, r in pairs(res.result or {}) do
-                        if r.edit then
-                            local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
-                            vim.lsp.util.apply_workspace_edit(r.edit, enc)
+                    local client = vim.lsp.get_client_by_id(cid)
+                    for _, action in pairs(res.result or {}) do
+                        local edit = action.edit
+                        -- Some servers (e.g. ruff) return actions without an inline edit
+                        -- and require a codeAction/resolve round trip to get one.
+                        if not edit and client and client:supports_method("codeAction/resolve") then
+                            local resolved = client:request_sync("codeAction/resolve", action, 1000, bufnr)
+                            edit = resolved and resolved.result and resolved.result.edit
+                        end
+                        if edit then
+                            local enc = (client or {}).offset_encoding or "utf-16"
+                            vim.lsp.util.apply_workspace_edit(edit, enc)
                         end
                     end
                 end
@@ -228,10 +224,10 @@ require("lazydev").setup({
 require("mason").setup()
 require("mason-lspconfig").setup({
     ensure_installed = {
-        "pyright",
+        "basedpyright",
+        "ruff",
         "gopls",
         "bashls",
-        --"ocamllsp",
         "terraformls",
         "lua_ls",
     },
@@ -254,6 +250,7 @@ vim.lsp.config("lua_ls", {
 vim.lsp.enable("lua_ls")
 
 vim.lsp.config("terraformls", {
+    on_attach = on_attach,
     capabilities = capabilities,
 })
 vim.lsp.enable("terraformls")
@@ -264,26 +261,39 @@ vim.lsp.config("bashls", {
 })
 vim.lsp.enable("bashls")
 
---vim.lsp.config("ocamllsp", {
---    capabilities = capabilities,
---})
---vim.lsp.enable("ocamllsp")
-
-vim.lsp.config("pyright", {
+vim.lsp.config("basedpyright", {
     capabilities = capabilities,
     settings = {
-        pyright = {
-            autoImportCompletion = true,
+        basedpyright = {
+            analysis = {
+                autoImportCompletions = true,
+            },
         },
         python = {
-            -- Use the SaaS container for python deps
-            venvPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv",
-            pythonPath = "~/_dev/docker-thirdparty/built-dockerfiles/oz-python/.venv/bin/python",
             diagnosticMode = "openFilesOnly",
         },
     },
 })
-vim.lsp.enable("pyright")
+vim.lsp.enable("basedpyright")
+
+vim.lsp.config("ruff", {
+    on_attach = on_attach,
+    capabilities = capabilities,
+})
+vim.lsp.enable("ruff")
+
+-- basedpyright and ruff both attach on python buffers; defer to basedpyright for hover
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
+    callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client == nil then return end
+        if client.name == "ruff" then
+            client.server_capabilities.hoverProvider = false
+        end
+    end,
+    desc = "LSP: Disable hover capability from Ruff",
+})
 
 vim.lsp.config("gopls", {
     on_attach = on_attach,
@@ -291,6 +301,7 @@ vim.lsp.config("gopls", {
     settings = {
         gopls = {
             gofumpt = true,
+            staticcheck = true,
         },
     },
 })
@@ -312,7 +323,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
         vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "K", function() vim.lsp.buf.hover({ border = "rounded" }) end, opts)
         vim.keymap.set("n", "<leader>f", function()
             vim.lsp.buf.format({ async = true, bufnr = opts.buffer, timeout_ms = 3000 })
         end, opts)
@@ -383,7 +394,6 @@ cmp.setup({
 })
 
 -- Format on save
-local util = require("formatter.util")
 -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
 require("formatter").setup({
     -- Enable or disable logging
@@ -392,20 +402,6 @@ require("formatter").setup({
     log_level = vim.log.levels.WARN,
     -- All formatter configurations are opt-in
     filetype = {
-        python = {
-            function()
-                return {
-                    exe = "ruff",
-                    args = {
-                        "format",
-                        "--stdin-filename",
-                        util.escape_path(util.get_current_buffer_file_path()),
-                        "-",
-                    },
-                    stdin = true,
-                }
-            end,
-        },
         json = {
             require("formatter.filetypes.json").prettier,
         },

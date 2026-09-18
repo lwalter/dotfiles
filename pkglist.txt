@@ -84,6 +84,7 @@ steam
 stow
 subversion
 tmux
+tree-sitter-cli
 ttf-0xproto-nerd
 ttf-dejavu
 udiskie
