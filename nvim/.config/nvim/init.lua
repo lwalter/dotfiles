@@ -132,6 +132,8 @@ local ts_langs = {
     "dockerfile",
     "bash",
     "typescript",
+    "tsx",
+    "javascript",
     "elixir",
     "json",
     "rust",
@@ -144,8 +146,10 @@ local ts_langs = {
 
 require("nvim-treesitter").install(ts_langs)
 
+local ts_filetypes = vim.list_extend(vim.deepcopy(ts_langs), { "typescriptreact", "javascriptreact" })
+
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = ts_langs,
+    pattern = ts_filetypes,
     callback = function()
         vim.treesitter.start()
     end,
@@ -230,6 +234,7 @@ require("mason-lspconfig").setup({
         "bashls",
         "terraformls",
         "lua_ls",
+        "ts_ls",
     },
 })
 
@@ -260,6 +265,12 @@ vim.lsp.config("bashls", {
     capabilities = capabilities,
 })
 vim.lsp.enable("bashls")
+
+vim.lsp.config("ts_ls", {
+    on_attach = on_attach,
+    capabilities = capabilities,
+})
+vim.lsp.enable("ts_ls")
 
 vim.lsp.config("basedpyright", {
     capabilities = capabilities,
