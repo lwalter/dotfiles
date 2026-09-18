@@ -46,6 +46,13 @@ hl.window_rule({
     workspace = "9 silent"
 })
 hl.window_rule({
+    name = "force-workspace-9-title",
+    match = {
+        title = "^(Battle\\.net)$"
+    },
+    workspace = "9 silent"
+})
+hl.window_rule({
     name = "force-workspace-8",
     match = {
         title = "^(Faugus)$"
