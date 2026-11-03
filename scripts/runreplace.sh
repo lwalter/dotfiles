@@ -2,7 +2,7 @@
 
 set -u
 function replace() {
-    flavors=("_retail_" "_classic_")
+    flavors=("_retail_")
     for flavor in "${flavors[@]}"; do
         local PROXY="/home/lucas/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/$flavor/Utils/WowVoiceProxy.exe"
         cat <<'EOF' >"$PROXY"
@@ -19,7 +19,7 @@ DIGEST=$(md5sum "$PROXY" | awk '{print $1}')
 echo "$DIGEST"
 
 while sleep 0.1; do
-    flavors=("_retail_" "_classic_")
+    flavors=("_retail_")
     for flavor in "${flavors[@]}"; do
         LOCALPROXY="/home/lucas/Faugus/battlenet/drive_c/Program Files (x86)/World of Warcraft/$flavor/Utils/WowVoiceProxy.exe"
         NEW_DIGEST=$(md5sum "$LOCALPROXY" | awk '{print $1}')
