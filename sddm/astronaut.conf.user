@@ -1,0 +1,4 @@
+[General]
+# Overrides for sddm-astronaut-theme (Themes/astronaut.conf).
+HourFormat="hh:mm AP"
+Font="JetBrainsMono Nerd Font"

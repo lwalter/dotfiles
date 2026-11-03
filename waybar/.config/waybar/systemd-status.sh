@@ -11,7 +11,7 @@ if [ -n "$all_failed" ]; then
     # Replace all literal newlines with safe '\n' strings
     tooltip_escaped=${tooltip//$'\n'/\\n}
 
-    echo "{\"text\": \"$count ⚠\", \"tooltip\": \"$tooltip_escaped\", \"class\": \"failed\"}"
+    echo "{\"text\": \"󰀦 $count failed\", \"tooltip\": \"$tooltip_escaped\", \"class\": \"failed\"}"
 else
-    echo "{\"text\": \"0 󰸞\", \"tooltip\": \"All systems nominal\", \"class\": \"healthy\"}"
+    echo "{\"text\": \"󰄬\", \"tooltip\": \"All systems nominal\", \"class\": \"healthy\"}"
 fi

@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Refreshing Waybar update count...
+When = PostTransaction
+Exec = /usr/bin/sh -c 'rm -f /run/user/*/waybar-updates.json; pkill -RTMIN+8 -x waybar; true'

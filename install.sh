@@ -109,21 +109,14 @@ function installThemesAndFonts() {
         tar -xvjf /tmp/TokyoNight-SE.tar.bz2 -C ~/.icons/
     fi
 
-    if [ ! -d "$HOME/.local/share/fonts/CaskaydiaMono" ]; then
-        curl -Lo /tmp/CaskaydiaMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/CaskaydiaMono.zip
-        unzip -o /tmp/CaskaydiaMono.zip -d ~/.local/share/fonts/CaskaydiaMono
-        fc-cache -f
-    fi
-
-    if [ ! -d "$HOME/.local/share/fonts/JetBrainsMono" ]; then
-        curl -Lo /tmp/JetBrainsMono.zip https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.0/JetBrainsMono.zip
-        unzip -o /tmp/JetBrainsMono.zip -d ~/.local/share/fonts/JetBrainsMono
-        fc-cache -f
-    fi
-
-    if [ ! -d "/usr/share/sddm/themes/astronaut" ]; then
+    if [ ! -d "/usr/share/sddm/themes/sddm-astronaut-theme" ]; then
         bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)"
     fi
+}
+
+function installSddmConfig() {
+    sudo install -Dm644 ./sddm/astronaut.conf.user \
+        /usr/share/sddm/themes/sddm-astronaut-theme/Themes/astronaut.conf.user
 }
 
 function main() {
@@ -136,6 +129,7 @@ function main() {
     installPackages
     downloadThemeConfigFiles
     installThemesAndFonts
+    installSddmConfig
     stowApplicationConfigs
     setSystemdUnits
 }

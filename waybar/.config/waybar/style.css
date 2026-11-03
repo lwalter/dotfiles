@@ -1,150 +1,168 @@
-/* --- Global Styles --- */
+/* ------------------------------------------------------------------
+ * Palette (Tokyo Night)
+ * ------------------------------------------------------------------ */
+@define-color bg        #1a1b26;
+@define-color surface   #24283b;
+@define-color border    #292e42;
+@define-color fg        #a9b1d6;
+@define-color fg-bright #c0caf5;
+@define-color muted     #565f89;
+@define-color accent    #7aa2f7;
+@define-color warning   #e0af68;
+@define-color critical  #f7768e;
+
+/* ------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------ */
 * {
-  font-family: 'SF Pro Text', 'Inter', 'JetBrainsMono Nerd Font', sans-serif;
-  font-size: 15px;
-  min-height: 0;
-  padding-right: 0px;
-  padding-left: 0px;
-  padding-bottom: 0px;
-}
-
-/* --- Waybar Container --- */
-#waybar {
-  background: transparent;
-  color: #c6d0f5;
-  margin: 0px;
+  font-family: 'JetBrainsMono Nerd Font Propo', 'JetBrainsMono Nerd Font', monospace;
+  font-size: 13px;
   font-weight: 500;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
 }
 
-/* --- Left Modules (Individual, Fully Rounded Blocks - With Horizontal Spacing & Simple Hover) --- */
-#workspaces,
-#window,
-#submap,
+window#waybar {
+  background-color: @bg;
+  color: @fg;
+  border-bottom: 1px solid @border;
+}
+
+tooltip {
+  background-color: @bg;
+  border: 1px solid @border;
+  border-radius: 4px;
+}
+
+tooltip label {
+  color: @fg;
+  padding: 2px 4px;
+}
+
+/* ------------------------------------------------------------------
+ * Modules — uniform spacing, no backgrounds
+ * ------------------------------------------------------------------ */
+#cpu,
 #memory,
-#custom-power,
-#custom-updates,
-#custom-systemd,
-#pulseaudio,
-#network,
 #custom-backup,
 #custom-mntbackup,
+#window,
+#submap,
+#custom-systemd,
+#custom-updates,
+#pulseaudio,
+#network,
+#clock,
+#custom-power {
+  padding: 0 10px;
+  color: @fg;
+  transition: color 150ms ease-in-out;
+}
+
+#cpu:hover,
+#memory:hover,
+#custom-backup:hover,
+#custom-mntbackup:hover,
+#custom-systemd:hover,
+#custom-updates:hover,
+#pulseaudio:hover,
+#network:hover,
+#clock:hover,
+#custom-power:hover {
+  color: @fg-bright;
+}
+
+/* Thin divider between the workspace switcher and the stats */
 #cpu {
-  background-color: #1a1b26;
-  padding: 0.3rem 0.7rem;
-  margin: 5px 0px; /* 5px top/bottom margin, 0px left/right (base for individual control) */
-  border-radius: 6px; /* These modules are always rounded */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  min-width: 0;
-  border: none;
-  /* Transition for background-color and color only */
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  margin-left: 4px;
+  border-left: 1px solid @border;
+  padding-left: 14px;
+}
+
+/* Thin divider before the clock / power group */
+#clock {
+  border-left: 1px solid @border;
+  padding-left: 14px;
+  color: @fg-bright;
 }
 
 #custom-power {
-    padding: 0 0 0 5px;
+  padding: 0 14px 0 8px;
+  color: @muted;
 }
 
+#custom-power:hover {
+  color: @critical;
+}
+
+/* ------------------------------------------------------------------
+ * Workspaces — numbers with an accent underline on the active one
+ * ------------------------------------------------------------------ */
 #workspaces {
-  padding: 2px;
-  margin-left: 7px; /* Margin from the far left edge */
-  /*margin-right: 5px;  Spacing after the workspaces module */
-}
-
-/* Simple Hover effects for individual left modules - BRIGHTER COLOR */
-#memory:hover,
-#custom-power:hover,
-#custom-updates:hover,
-#custom-systemd:hover,
-#pulseaudio:hover,
-#network:hover,
-#custom-backup:hover,
-#custom-mntbackup:hover,
-#cpu:hover {
-  background-color: rgb(41, 42, 53); /* Brighter highlight */
+  margin-left: 6px;
 }
 
 #workspaces button {
-  color: #babbf1;
-  border-radius: 5px; /* Workspaces buttons are always rounded */
-  padding: 0.3rem 0.6rem;
+  padding: 0 8px;
+  color: @muted;
   background: transparent;
-  transition: all 0.2s ease-in-out;
-  border: none;
-  outline: none;
-}
-
-#workspaces button.active {
-  color: #99d1db;
-  background-color: rgba(153, 209, 219, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(153, 209, 219, 0.2);
+  border-bottom: 2px solid transparent;
+  transition: color 150ms ease-in-out, border-color 150ms ease-in-out;
 }
 
 #workspaces button:hover {
-  background: rgb(41, 42, 53); /* Reference bright hover color */
-  color: #c6d0f5;
+  color: @fg-bright;
+  background: transparent;
 }
 
-/* --- Center Module (Individual, Fully Rounded Block - With Simple Hover) --- */
-#clock {
-  background-color: #1a1b26;
-  padding: 0.3rem 0.7rem;
-  margin: 5px 0px;
-  border-radius: 6px; /* This module is always rounded */
-  box-shadow: 0 1px 3px rgba(153, 209, 219, 0.2);
-  min-width: 0;
-  border: none;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+#workspaces button.active {
+  color: @fg-bright;
+  border-bottom: 2px solid @accent;
 }
 
-/* Simple Hover effect for clock module - BRIGHTER COLOR */
-#clock:hover {
-  /*background-color: rgba(153, 209, 219, 0.1);  Brighter highlight */
-  background-color: rgb(41, 42, 53); /* Brighter highlight */
+#workspaces button.urgent {
+  color: @critical;
 }
 
-#cpu {
-  color: #c6d0f5;
+/* ------------------------------------------------------------------
+ * Center
+ * ------------------------------------------------------------------ */
+#window {
+  color: @muted;
 }
 
-#custom-systemd.failed {
-    color: #f38ba8;
-    border-radius: 5px;
-    font-weight: bold;
+#submap {
+  color: @bg;
+  background-color: @accent;
+  border-radius: 3px;
+  margin: 5px 6px;
+  padding: 0 8px;
 }
 
-#custom-backup,
-#custom-mntbackup {
-  color: #c6d0f5;
+/* ------------------------------------------------------------------
+ * State colors — the only place color is used
+ * ------------------------------------------------------------------ */
+#cpu.warning,
+#memory.warning,
+#custom-backup.warning,
+#custom-mntbackup.warning,
+#custom-updates.has-updates {
+  color: @warning;
 }
 
-#clock {
-  color: #99d1db;
-  font-weight: 500;
+#cpu.critical,
+#memory.critical,
+#custom-backup.critical,
+#custom-mntbackup.critical,
+#custom-systemd.failed,
+#network.disconnected,
+#pulseaudio.muted {
+  color: @critical;
 }
 
-#pulseaudio {
-  color: #c6d0f5;
+#custom-systemd.healthy {
+  color: @muted;
 }
-
-#network {
-  color: #c6d0f5;
-  padding-left: 5px;
-}
-
-#network.disconnected {
-  color: #e78284;
-}
-
-/* --- Tooltip Styles --- */
-tooltip {
-  background-color: #1a1b26;
-  color: #dddddd;
-  padding: 5px 12px;
-  margin: 5px 0px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  font-size: 12px;
-}
-
-
