@@ -1,4 +1,5 @@
 ckb-next-git
+claude-code
 downgrade
 faugus-launcher
 google-chrome

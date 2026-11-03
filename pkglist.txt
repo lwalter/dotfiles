@@ -1,7 +1,6 @@
+7zip
 alacritty
 amd-ucode
-android-tools
-android-udev
 apcupsd
 base
 base-devel
@@ -24,6 +23,7 @@ exfatprogs
 fastfetch
 fd
 firefox
+fuse2
 fzf
 git
 gparted
