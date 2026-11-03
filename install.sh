@@ -63,7 +63,6 @@ function stowApplicationConfigs() {
         "wofi"
         "waybar"
         "yazi"
-        "ptt-fix"
         "electron-flags"
         "udiskie"
         "nwg-bar"

@@ -120,7 +120,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd("udiskie")
     hl.exec_cmd("wl-paste --watch cliphist store")
-    hl.exec_cmd("systemctl --user start ptt-fix")
 end)
 
 -- Environment variables
@@ -284,6 +283,11 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("wofi -r --show drun --allow-images -D key_expand=Tab"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 --hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
+
+local ptt_mods = { "", "SHIFT + ", "CTRL + ", "ALT + ", "CTRL + SHIFT + ", "ALT + SHIFT + ", "CTRL + ALT + " }
+for _, mods in ipairs(ptt_mods) do
+    hl.bind(mods .. "code:191", hl.dsp.global("discord:discord-push-to-talk"), { ignore_mods = true })
+end
 
 hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "right" }))
